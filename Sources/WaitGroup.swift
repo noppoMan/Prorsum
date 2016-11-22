@@ -6,14 +6,8 @@
 //
 //
 
+import Foundation
 import Dispatch
-
-extension DispatchTime: ExpressibleByIntegerLiteral {
-    
-    public init(integerLiteral value: Int){
-        self.init(uptimeNanoseconds: UInt64(value))
-    }
-}
 
 public enum WaitGroupError: Error {
     case negativeWaitGroupCount
@@ -37,7 +31,7 @@ public class WaitGrpup {
         cond.mutex.unlock()
     }
     
-    public func wait(_ timeout: DispatchTime? = nil){ // TODO should implement time out with pthread_cond_timedwait
+    public func wait(){
         cond.mutex.lock()
         while count > 0 {
             cond.wait()

@@ -19,35 +19,48 @@ public class Mutex {
         mutex = pthread_mutex_t()
         pthread_mutex_init(&mutex, nil)
     }
+    
+    public func lock(){
+        pthread_mutex_lock(&mutex)
+    }
+    
+    public func unlock(){
+        pthread_mutex_unlock(&mutex)
+    }
+    
+    deinit{
+        pthread_mutex_destroy(&mutex)
+    }
 }
 
 public class Cond {
+    
+    let mutex = Mutex()
+    
     var cond: pthread_cond_t
     
-    public init(){
+    public convenience init(){
+        self.init(mutext: Mutex())
+    }
+    
+    public init(mutext: Mutex){
         cond = pthread_cond_t()
         pthread_cond_init(&cond, nil)
     }
     
-    public func wait(_ mutex: Mutex){
+    public func broadcast() {
+        pthread_cond_broadcast(&cond)
+    }
+    
+    public func wait(){
         pthread_cond_wait(&cond, &mutex.mutex)
     }
     
     public func signal(){
         pthread_cond_signal(&cond)
     }
-}
-
-public class PThread {
-    let mutex = Mutex()
     
-    let cond = Cond()
-    
-    public func wait(){
-        cond.wait(mutex)
-    }
-    
-    public func signal(){
-        cond.signal()
+    deinit{
+        pthread_cond_destroy(&cond)
     }
 }

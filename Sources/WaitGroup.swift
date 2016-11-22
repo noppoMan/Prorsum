@@ -28,13 +28,11 @@ public class WaitGrpup {
     public init(){}
     
     public func add(_ delta: Int){
-        if count < 0 {
-            // MARK: – crash
-            swiftPanic(error: WaitGroupError.negativeWaitGroupCount)
-        }
-        
         cond.mutex.lock()
         count+=delta
+        if count < 0 {
+            swiftPanic(error: WaitGroupError.negativeWaitGroupCount)
+        }
         cond.broadcast()
         cond.mutex.unlock()
     }

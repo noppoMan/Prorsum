@@ -15,12 +15,44 @@ wg.add(1)
 
 go {
     sleep(1)
-    print("Hi dude")
+    print("wg: 1")
+    wg.done()
+}
+
+wg.add(1)
+
+go {
+    sleep(2)
+    print("wg: 2")
     wg.done()
 }
 
 wg.wait()
 
-print("done")
+print("wg done")
+
+let chan = Channel<Int>.make(capacity: 1)
+
+go {
+    try! chan.send(1)
+    sleep(1)
+    try! chan.send(1)
+    sleep(1)
+    
+    go {
+        sleep(1)
+        try! chan.send(1)
+    }
+    
+    go {
+        sleep(1)
+        try! chan.send(1)
+    }
+}
+
+let sum = try! chan.receive() + chan.receive() + chan.receive() + chan.receive()
+assert(sum == 4)
+print("sum: \(sum)")
+print("channel done")
 
 Prorsum.run()

@@ -12,8 +12,14 @@
     import Darwin.C
 #endif
 
+import Foundation
+
+public enum PThreadError: Error {
+    case condTimedWaitTimeout(Int)
+}
+
 public class Mutex {
-    var mutex: pthread_mutex_t
+    fileprivate var mutex: pthread_mutex_t
     
     public init(){
         mutex = pthread_mutex_t()
@@ -37,7 +43,7 @@ public class Cond {
     
     let mutex = Mutex()
     
-    var cond: pthread_cond_t
+    fileprivate var cond: pthread_cond_t
     
     public convenience init(){
         self.init(mutext: Mutex())
@@ -54,6 +60,23 @@ public class Cond {
     
     public func wait(){
         pthread_cond_wait(&cond, &mutex.mutex)
+    }
+    
+    public func timedwait(_ timeout: TimeInterval) throws {
+        let ms = Int(timeout*1000)
+        var tv = timeval()
+        var ts = timespec()
+        gettimeofday(&tv, nil)
+        ts.tv_sec = time(nil) + ms / 1000
+        let tmp = 1000 * 1000 * (ms % 1000)
+        ts.tv_nsec = Int(tv.tv_usec * 1000 + tmp)
+        ts.tv_sec += ts.tv_nsec / 1000000000
+        ts.tv_nsec %= 1000000000
+        
+        let r = pthread_cond_timedwait(&cond, &mutex.mutex, &ts)
+        if r != 0 {
+            throw PThreadError.condTimedWaitTimeout(Int(timeout))
+        }
     }
     
     public func signal(){

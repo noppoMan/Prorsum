@@ -2,5 +2,7 @@ import XCTest
 @testable import ProrsumTests
 
 XCTMain([
-     testCase(ProrsumTests.allTests),
+    testCase(ChannelTests.allTests),
+    testCase(WaitGroupTests.allTests),
+    testCase(SelectTests.allTests)
 ])

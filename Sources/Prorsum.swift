@@ -7,8 +7,16 @@ func swiftPanic(error: Error){
     fatalError("\(error)")
 }
 
+public func go(_ task: @autoclosure @escaping (Void) -> Void){
+    _go(task)
+}
+
 public func go(_ task: @escaping (Void) -> Void){
-    let operation = BlockOperation() // TODO should be retain on memory to cancel by the Operation
+    _go(task)
+}
+
+private func _go(_ task: @escaping (Void) -> Void){
+    let operation = BlockOperation()
     
     operation.addExecutionBlock {
         task()
@@ -17,6 +25,6 @@ public func go(_ task: @escaping (Void) -> Void){
     _operationQ.addOperation(operation)
 }
 
-public func run(){
+public func runLoop(){
     RunLoop.main.run()
 }

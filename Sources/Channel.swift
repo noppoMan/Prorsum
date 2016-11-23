@@ -25,7 +25,8 @@ class IDGenerator {
 }
 
 public enum ChannelError: Error {
-    case alreadyClosed
+    case receivedOnClosedChannel
+    case sendOnClosedChannel
 }
 
 public class Channel<T> {
@@ -61,7 +62,7 @@ public class Channel<T> {
         }
         
         if isClosed {
-            throw ChannelError.alreadyClosed
+            throw ChannelError.sendOnClosedChannel
         }
         
         messages.append(message)
@@ -70,6 +71,24 @@ public class Channel<T> {
         while messages.count > capacity {
             cond.wait()
         }
+    }
+    
+    public func nonBlockingReceive() throws -> T? {
+        cond.mutex.lock()
+        defer {
+            cond.mutex.unlock()
+        }
+        
+        if messages.count > 0 {
+            cond.broadcast()
+            return messages.remove(at: 0)
+        }
+        
+        if isClosed {
+            throw ChannelError.receivedOnClosedChannel
+        }
+        
+        return nil
     }
     
     public func receive() throws -> T {
@@ -85,7 +104,7 @@ public class Channel<T> {
             }
             
             if isClosed {
-                throw ChannelError.alreadyClosed
+                throw ChannelError.receivedOnClosedChannel
             }
             
             cond.wait()

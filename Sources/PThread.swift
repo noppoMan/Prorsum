@@ -14,10 +14,6 @@
 
 import Foundation
 
-public enum PThreadError: Error {
-    case condTimedWaitTimeout(Int)
-}
-
 public class Mutex {
     fileprivate var mutex: pthread_mutex_t
     
@@ -75,7 +71,7 @@ public class Cond {
         
         let r = pthread_cond_timedwait(&cond, &mutex.mutex, &ts)
         if r != 0 {
-            throw PThreadError.condTimedWaitTimeout(Int(timeout))
+            throw SystemError.lastOperationError ?? SystemError.operationTimedOut
         }
     }
     

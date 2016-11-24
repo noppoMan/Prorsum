@@ -1,30 +1,28 @@
 import Foundation
 import Dispatch
 
-let _operationQ = OperationQueue()
+let schedulerQ = DispatchQueue(label: "prorsum.scheduler.queue", attributes: .concurrent)
 
-func swiftPanic(error: Error){
-    fatalError("\(error)")
+public func go(_ routine: @autoclosure @escaping (Void) -> Void){
+    schedulerQ.async(execute: routine)
 }
 
-public func go(_ task: @autoclosure @escaping (Void) -> Void){
-    _go(task)
+public func go(_ routine: @escaping (Void) -> Void){
+    schedulerQ.async(execute: routine)
 }
 
-public func go(_ task: @escaping (Void) -> Void){
-    _go(task)
+public func gomain(_ routine: @autoclosure @escaping (Void) -> Void) {
+    DispatchQueue.main.async(execute: routine)
 }
 
-private func _go(_ task: @escaping (Void) -> Void){
-    let operation = BlockOperation()
-    
-    operation.addExecutionBlock {
-        task()
-    }
-    
-    _operationQ.addOperation(operation)
+public func gomain(_ routine: @escaping (Void) -> Void) {
+    DispatchQueue.main.async(execute: routine)
 }
 
 public func runLoop(){
     RunLoop.main.run()
+}
+
+func swiftPanic(error: Error){
+    fatalError("\(error)")
 }

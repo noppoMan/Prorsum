@@ -5,7 +5,7 @@ A Go like current system for Swift
 
 ## Features
 
-- [x] OperationQueue based Concurrent System
+- [x] GCD based Concurrent System
 - [x] WaitGroup
 - [x] Once
 - [x] Channels
@@ -41,24 +41,28 @@ Not supported yet
 ## Usage
 
 ### `go`
-go is an alias of `OperationQueue.addOperation { }`
+go is an alias of `DispatchQueue().async { }`
 
 ```swift
 func asyncTask(){
-  print(Thread.current)
+    print(Thread.current)
 }
 
 go(asyncTask())
 
 go {
-  print(Thread.current)
+    print(Thread.current)
+}
+
+gomain {
+    print(Thread.current) // back to the main thread
 }
 ```
 
 
 ### `WaitGroup`
 
-A WaitGroup waits for a collection of `BlockOperations` to finish. The main `BlockOperation` calls Add to set the number of `BlockOperations` to wait for. Then each of the `BlockOperations` runs and calls Done when finished. At the same time, Wait can be used to block until all `BlockOperations` have finished.
+A WaitGroup waits for a collection of GCD operations to finish. The main GCD operation calls Add to set the number of GCD operations to wait for. Then each of the GCD operations runs and calls Done when finished. At the same time, Wait can be used to block until all GCD operations have finished.
 
 
 ```swift
@@ -86,7 +90,7 @@ print("wg done")
 
 ### `Channel<Element>`
 
-Channels are the pipes that connect concurrent operation. You can send values into channels from one `BlockOperation` and receive those values into another `BlockOperation`.
+Channels are the pipes that connect concurrent operation. You can send values into channels from one GCD operation and receive those values into another GCD operation.
 
 ```swift
 let ch = Channel<String>.make(capacity: 1)

@@ -55,7 +55,7 @@ public class Channel<T> {
         return messages.count
     }
     
-    func send(_ message: T) throws {
+    public func send(_ message: T) throws {
         cond.mutex.lock()
         defer {
             cond.mutex.unlock()

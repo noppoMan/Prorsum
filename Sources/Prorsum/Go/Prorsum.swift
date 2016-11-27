@@ -19,10 +19,6 @@ public func gomain(_ routine: @escaping (Void) -> Void) {
     DispatchQueue.main.async(execute: routine)
 }
 
-public func runLoop(){
-    RunLoop.main.run()
-}
-
 func swiftPanic(error: Error){
     fatalError("\(error)")
 }

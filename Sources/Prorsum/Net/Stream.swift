@@ -20,16 +20,25 @@ public enum StreamError: Error {
 }
 
 public protocol ReadableStream: class {
-    var socket: Socket { get }
-//    var io: DispatchIO { get }
     var isClosed: Bool { get set }
-    func read(upTo numOfBytes: Int) throws -> Bytes
+    func read(upTo numOfBytes: Int, deadline: Double) throws -> Bytes
     func close()
 }
 
 extension ReadableStream {
+    public func read(upTo numOfBytes: Int) throws -> Bytes {
+        return try self.read(upTo: numOfBytes, deadline: 0)
+    }
+}
+
+public protocol ReadableIOStream: ReadableStream {
+    var socket: Socket { get }
+    //    var io: DispatchIO { get }
+}
+
+extension ReadableIOStream {
     
-    public func read(upTo numOfBytes: Int = 1024) throws -> Bytes {
+    public func read(upTo numOfBytes: Int = 1024, deadline: Double = 0) throws -> Bytes {
         if isClosed {
             throw StreamError.alreadyClosed
         }
@@ -52,17 +61,25 @@ extension ReadableStream {
 }
 
 public protocol WritableStream {
-    var socket: Socket { get }
-//    var io: DispatchIO { get }
     var isClosed: Bool { get }
-    func write(_ bytes: Bytes) throws
+    func write(_ bytes: Bytes, deadline: Double) throws
     func close()
 }
 
-
 extension WritableStream {
-    
     public func write(_ bytes: Bytes) throws {
+        try self.write(bytes, deadline: 0)
+    }
+}
+
+public protocol WritableIOStream: WritableStream {
+    var socket: Socket { get }
+    //    var io: DispatchIO { get }
+}
+
+extension WritableIOStream {
+    
+    public func write(_ bytes: Bytes, deadline: Double = 0) throws {
         if isClosed {
             throw StreamError.alreadyClosed
         }
@@ -75,3 +92,7 @@ extension WritableStream {
 
     }
 }
+
+public typealias DuplexStream = ReadableStream & WritableStream
+
+public typealias DuplexIOStream = ReadableIOStream & WritableIOStream

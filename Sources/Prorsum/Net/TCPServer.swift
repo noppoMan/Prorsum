@@ -22,7 +22,7 @@ public class TCPServer {
         return socket.isClosed
     }
     
-    private var onError: ((Error) -> Void)? = nil
+    var onError: ((Error) -> Void)? = nil
     
     public init(_ handler: @escaping (TCP) -> Void) throws {
         socket = try TCP()

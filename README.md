@@ -1,5 +1,5 @@
 # Prorsum
-A Go like concurrent system + simple net networking libraries for Swif
+A Go like concurrent system + networking/http libraries for Swif
 
 ⚠️ Prorsum is in early development and pretty experimental.
 
@@ -206,6 +206,37 @@ go {
 }
 
 try! server.bind(host: "0.0.0.0", port: 3000)
+try! server.listen() //start run loop
+```
+
+
+### HTTP Server
+
+```swift
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
+let server = try! HTTPServer { (request, writer) in
+    do {
+        let response = Response(
+            headers: ["Server": "Prorsum Micro HTTP Server"],
+            body: .buffer("hello".data)
+        )
+
+        let serializer = ResponseSerializer(stream: writer)
+        try serializer.serialize(response, deadline: 0)
+
+        writer.close()
+    } catch {
+        fatalError("\(error)")
+    }
+}
+
+try! server.bind(host: "0.0.0.0", port: 3000)
+print("Server listening at 0.0.0.0:3000")
 try! server.listen() //start run loop
 ```
 

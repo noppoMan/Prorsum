@@ -1,5 +1,5 @@
 # Prorsum
-A Go like current system for Swift
+A Go like concurrent system + simple net networking libraries for Swif
 
 ⚠️ Prorsum is in early development and pretty experimental.
 
@@ -12,6 +12,8 @@ A Go like current system for Swift
 - [ ] Channel Iteration
 - [x] Select
 - [ ] Timers
+- [x] TCP Server/Client
+- [ ] HTTP Server/Client
 
 ## Installation
 
@@ -96,13 +98,13 @@ Channels are the pipes that connect concurrent operation. You can send values in
 let ch = Channel<String>.make(capacity: 1)
 
 func asyncSend(){
-  try! ch.send("Expecto patronum!")
+    try! ch.send("Expecto patronum!")
 }
 
 go(asyncSend()) // => Expecto patronum!
 
 go {
-  try! ch.send("Accio!")
+    try! ch.send("Accio!")
 }
 
 try! ch.receive() // => Accio!
@@ -123,13 +125,13 @@ go {
 }
 
 select {
-  when(magicCh) {
-    print($0)
-  }
+    when(magicCh) {
+        print($0)
+    }
 
-  otherwise {
-    print("otherwise")
-  }
+    otherwise {
+        print("otherwise")
+    }
 }
 ```
 
@@ -143,28 +145,70 @@ let magicCh = Channel<String>.make(capacity: 1)
 let doneCh = Channel<String>.make(capacity: 1)
 
 go {
-  try! magicCh.send("Crucio")
-  try! magicCh.send("Imperio")
+    try! magicCh.send("Crucio")
+    try! magicCh.send("Imperio")
 }
 
 go {
-  try! doneCh.send("Avada Kedavra!")
+    try! doneCh.send("Avada Kedavra!")
 }
 
-select { done in
-  when(magicCh) {
-    print($0)
-  }
+forSelect { done in
+    when(magicCh) {
+        print($0)
+    }
 
-  when(doneCh) {
-    done() // break current loop
-  }
+    when(doneCh) {
+        done() // break current loop
+    }
 
-  otherwise {
-    print("otherwise")
-  }
+    otherwise {
+        print("otherwise")
+    }
 }
 ```
+
+
+## Networking
+
+### TCP
+
+#### Echo Server
+
+```swift
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
+let server = try! TCPServer { clientSocket in
+    while !clientSocket.isClosed {
+        let bytes = try! clientSocket.read()
+        try! clientSocket.write(bytes)
+        clientSocket.close()
+    }
+}
+
+// setup client
+go {
+    sleep(1)
+    let client = try! TCP()
+    try! client.connect(host: "0.0.0.0", port: 3000)
+    while !client.isClosed {
+        try! client.write(Array("hello".utf8))
+        let bytes = try! client.read()
+        if !bytes.isEmpty {
+            print(String(bytes: bytes, encoding: .utf8))
+        }
+    }
+    server.terminate() // terminate server
+}
+
+try! server.bind(host: "0.0.0.0", port: 3000)
+try! server.listen() //start run loop
+```
+
 
 ## License
 Prorsum is released under the MIT license. See LICENSE for details.

@@ -44,9 +44,6 @@ let IPPROTO_TCP = Darwin.IPPROTO_TCP
 let SOCK_MAXADDRLEN = Darwin.SOCK_MAXADDRLEN
 #endif
 
-@_exported import Go
-@_exported import POSIX
-
 public typealias Byte = UInt8
 public typealias Bytes = [Byte]
 

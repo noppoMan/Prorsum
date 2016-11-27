@@ -15,7 +15,7 @@
 
 import Dispatch
 
-public class TCP: ReadableStream, WritableStream {
+public final class TCP: ReadableIOStream, WritableIOStream {
     
     public let socket: Socket
     
@@ -23,7 +23,7 @@ public class TCP: ReadableStream, WritableStream {
     
     //public let io: DispatchIO // for async i/o
     
-    public init(socket: Socket) throws {
+    public init(socket: Socket) {
         self.socket = socket
 //        io = DispatchIO(type: .stream, fileDescriptor: socket.fd, queue: .main) { _errorno in
 //            if let error = SystemError(errorNumber: _errorno) {
@@ -51,7 +51,7 @@ public class TCP: ReadableStream, WritableStream {
         }
         
         let client = Socket(fd: fd, addressFamily: .inet, sockType: .stream)
-        return try TCP(socket: client)
+        return TCP(socket: client)
     }
     
     public func bind(host: String, port: UInt) throws {

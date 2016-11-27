@@ -22,6 +22,14 @@ public class Mutex {
         pthread_mutex_init(&mutex, nil)
     }
     
+    public func trylock() throws {
+        let r = pthread_mutex_trylock(&mutex)
+        if r != 0 {
+            throw SystemError.lastOperationError!
+        }
+        
+    }
+    
     public func lock(){
         pthread_mutex_lock(&mutex)
     }

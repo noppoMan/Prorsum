@@ -13,6 +13,7 @@
 #endif
 
 import Foundation
+import POSIX
 
 public class Mutex {
     fileprivate var mutex: pthread_mutex_t

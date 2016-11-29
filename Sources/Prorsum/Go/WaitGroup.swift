@@ -13,7 +13,7 @@ public enum WaitGroupError: Error {
     case negativeWaitGroupCount
 }
 
-public class WaitGrpup {
+public class WaitGroup {
     
     let cond = Cond()
     

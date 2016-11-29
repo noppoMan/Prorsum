@@ -53,16 +53,17 @@ class SelectTests: XCTestCase {
         
         go {
             try! ch.send(1)
-            try! ch.send(1)
-            try! ch.send(1)
+            try! ch.send(2)
+            try! ch.send(3)
             try! doneCh.send("done")
         }
-
+        
+        var i = 0
         forSelect { done in
             when(ch) {
-                XCTAssertEqual($0, 1)
-                XCTAssertEqual($0, 1)
-                XCTAssertEqual($0, 1)
+                i+=1
+                print($0)
+                XCTAssertEqual($0, i)
             }
 
             when(doneCh) {

@@ -1,14 +1,30 @@
 import Foundation
 import Dispatch
 
-let schedulerQ = DispatchQueue(label: "prorsum.scheduler.queue", attributes: .concurrent)
+private let serialSchedulerQ = DispatchQueue(label: "prorsum.scheduler.serial-queue")
 
-public func go(_ routine: @autoclosure @escaping (Void) -> Void){
-    schedulerQ.async(execute: routine)
+private let concurrentSchedulerQ = DispatchQueue(label: "prorsum.scheduler.concurrent-queue", attributes: .concurrent)
+
+public enum DispatchConcurrentType {
+    case serial
+    case concurrent
 }
 
-public func go(_ routine: @escaping (Void) -> Void){
-    schedulerQ.async(execute: routine)
+public func go(type: DispatchConcurrentType = .concurrent, _ routine: @autoclosure @escaping (Void) -> Void){
+    _go(type, routine)
+}
+
+public func go(type: DispatchConcurrentType = .concurrent, _ routine: @escaping (Void) -> Void){
+    _go(type, routine)
+}
+
+private func _go(_ type: DispatchConcurrentType, _ routine: @escaping (Void) -> Void){
+    switch type {
+    case .concurrent:
+        concurrentSchedulerQ.async(execute: routine)
+    case .serial:
+        serialSchedulerQ.async(execute: routine)
+    }
 }
 
 public func gomain(_ routine: @autoclosure @escaping (Void) -> Void) {

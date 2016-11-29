@@ -6,39 +6,46 @@
 //
 //
 
-class Stack<T> {
+public class StackNode<T> {
+    public let value: T
+    public var next: StackNode?
     
-    var stackArray: [T]
-    
-    public var top: T? {
-        return stackArray.first
+    public init(_ newvalue: T) {
+        self.value = newvalue
     }
+}
+
+public class Stack<T> {
     
-    public var count: Int {
-        return stackArray.count
-    }
+    public typealias Element = T
     
-    public init(){
-        stackArray = [T]()
-    }
+    public private(set) var count = 0
+    
+    public private(set) var front: StackNode<Element>?
+    
+    public init () {}
     
     public func push(_ element: T) {
-        stackArray.insert(element, at: 0)
+        let node = StackNode<T>(element)
+        if front == nil {
+            front = node
+        } else {
+            let prevFront = front
+            front = node
+            front?.next = prevFront
+        }
+        count+=1
     }
     
     @discardableResult
     public func pop() -> T? {
-        if stackArray.count > 0 {
-            return stackArray.removeFirst()
+        if let front = self.front {
+            self.front = self.front?.next
+            count-=1
+            return front.value
         } else {
             return nil
         }
-    }
-}
-
-extension Stack: CustomStringConvertible {
-    public var description: String {
-        return "\(self.stackArray)"
     }
 }
 

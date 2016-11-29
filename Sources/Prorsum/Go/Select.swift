@@ -154,13 +154,13 @@ public func select(_ handler: (Void) -> Void){
 }
 
 public func when<T>(_ chan: Channel<T>, _ handler: @escaping (T) -> Void){
-    if let sel = Select.stack.top {
+    if let sel = Select.stack.front?.value {
         sel.when(chan, handler)
     }
 }
 
 public func otherwise(_ handler: @escaping (Void) -> Void){
-    if let sel = Select.stack.top {
+    if let sel = Select.stack.front?.value {
         sel.otherwise(handler)
     }
 }

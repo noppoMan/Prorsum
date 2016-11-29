@@ -6,6 +6,7 @@
 //
 //
 
+import Foundation.NSThread
 
 class IDGenerator {
     static let shared = IDGenerator()
@@ -27,13 +28,14 @@ class IDGenerator {
 public enum ChannelError: Error {
     case receivedOnClosedChannel
     case sendOnClosedChannel
+    case bufferSizeLimitExceeded(Int)
 }
 
 public class Channel<T> {
     
     let id : Int
     
-    var messages = [T]()
+    var messageQ = Queue<T>()
     
     public private(set) var capacity: Int
     
@@ -47,12 +49,12 @@ public class Channel<T> {
         self.id = IDGenerator.shared.currentId()
     }
     
-    public func count() -> Int{
+    public func count() -> Int {
         if capacity == 0 {
             return 0
         }
         
-        return messages.count
+        return messageQ.count
     }
     
     public func send(_ message: T) throws {
@@ -65,11 +67,11 @@ public class Channel<T> {
             throw ChannelError.sendOnClosedChannel
         }
         
-        messages.append(message)
+        messageQ.push(message)
         cond.broadcast()
         
-        while messages.count > capacity {
-            cond.wait()
+        if Thread.current.isMainThread, messageQ.count > capacity {
+            throw ChannelError.bufferSizeLimitExceeded(capacity)
         }
     }
     
@@ -78,10 +80,11 @@ public class Channel<T> {
         defer {
             cond.mutex.unlock()
         }
-        
-        if messages.count > 0 {
+
+        if let f = messageQ.front {
+            messageQ.pop()
             cond.broadcast()
-            return messages.remove(at: 0)
+            return f.value
         }
         
         if isClosed {
@@ -98,15 +101,15 @@ public class Channel<T> {
         }
         
         while true {
-            if messages.count > 0 {
+            if let f = messageQ.front {
+                messageQ.pop()
                 cond.broadcast()
-                return messages.remove(at: 0)
+                return f.value
             }
             
             if isClosed {
                 throw ChannelError.receivedOnClosedChannel
             }
-            
             cond.wait()
         }
     }

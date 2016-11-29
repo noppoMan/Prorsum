@@ -46,7 +46,7 @@ extension ReadableIOStream {
         try self.socket.setBlocking(shouldBlock: true)
         
         var buf = Bytes(repeating: 0, count: numOfBytes)
-        let bytesRead = Darwin.recv(socket.fd, &buf, numOfBytes, 0)
+        let bytesRead = recv(socket.fd, &buf, numOfBytes, 0)
         
         guard bytesRead > -1 else {
             throw SystemError.lastOperationError!

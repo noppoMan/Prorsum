@@ -62,7 +62,6 @@ class SelectTests: XCTestCase {
         forSelect { done in
             when(ch) {
                 i+=1
-                print($0)
                 XCTAssertEqual($0, i)
             }
 

@@ -19,7 +19,7 @@ class WaitGroupTests: XCTestCase {
     
     func testWG() {
         let exp = expectation(description: "waitGroup")
-        let wg = WaitGrpup()
+        let wg = WaitGroup()
         
         wg.add(1)
         go {

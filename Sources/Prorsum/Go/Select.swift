@@ -95,7 +95,7 @@ private class Select {
         }
         
         cond.mutex.lock()
-        do { try cond.timedwait(0.25) } catch { }
+        cond.wait(timeout: 0.25)
         cond.mutex.unlock()
     }
     

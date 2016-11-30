@@ -37,7 +37,7 @@ public class Mutex {
 
 public class Cond {
     
-    let mutex = Mutex()
+    public let mutex = Mutex()
     
     fileprivate var cond: pthread_cond_t
     
@@ -58,7 +58,8 @@ public class Cond {
         pthread_cond_wait(&cond, &mutex.mutex)
     }
     
-    public func timedwait(_ timeout: TimeInterval) throws {
+    @discardableResult
+    public func wait(timeout: TimeInterval) -> Bool {
         let ms = Int(timeout*1000)
         var tv = timeval()
         var ts = timespec()
@@ -69,10 +70,7 @@ public class Cond {
         ts.tv_sec += ts.tv_nsec / 1000000000
         ts.tv_nsec %= 1000000000
         
-        let r = pthread_cond_timedwait(&cond, &mutex.mutex, &ts)
-        if r != 0 {
-            throw SystemError.lastOperationError ?? SystemError.operationTimedOut
-        }
+        return pthread_cond_timedwait(&cond, &mutex.mutex, &ts) == 0
     }
     
     public func signal(){

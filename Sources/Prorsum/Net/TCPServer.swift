@@ -25,6 +25,7 @@ public class TCPServer {
     var onError: ((Error) -> Void)? = nil
     
     public init(_ handler: @escaping (TCP) -> Void) throws {
+        signal(SIGPIPE, SIG_IGN)
         socket = try TCP()
         self.handler = handler
         loop = CFRunLoopGetCurrent()

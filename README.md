@@ -5,6 +5,7 @@ A Go like concurrent system + networking/http libraries for Swif
 
 ## Features
 
+#### Go like equipments
 - [x] GCD based Concurrent System
 - [x] WaitGroup
 - [x] Once
@@ -12,9 +13,13 @@ A Go like concurrent system + networking/http libraries for Swif
 - [ ] Channel Iteration
 - [x] Select
 - [ ] Timers
-- [x] TCP Server/Client
+
+#### Networking/HTTP
+- [x] DNS
+- [x] TCP Server
+- [x] TCP Client
 - [x] HTTP Server
-- [ ] HTTP Client
+- [x] HTTP Client
 
 ## Installation
 
@@ -170,9 +175,9 @@ forSelect { done in
 ```
 
 
-## Networking
+# Networking
 
-### HTTP Server
+## HTTP Server
 
 ```swift
 let server = try! HTTPServer { (request, writer) in
@@ -181,9 +186,9 @@ let server = try! HTTPServer { (request, writer) in
             headers: ["Server": "Prorsum Micro HTTP Server"],
             body: .buffer("hello".data)
         )
-        
+
         try writer.serialize(response)
-        
+
         writer.close()
     } catch {
         fatalError("\(error)")
@@ -195,7 +200,24 @@ print("Server listening at 0.0.0.0:3000")
 try! server.listen() //start run loop
 ```
 
-### TCP
+## HTTP Client
+
+```swift
+let url = URL(string: "http://google.com")
+let client = try! HTTPClient(url: url!)
+try! client.connect()
+let response = try! client.request()
+
+print(response)
+// HTTP/1.1 302 Found
+// Content-Type: text/html; charset=UTF-8
+// Location: http://www.google.co.jp/?gfe_rd=cr&ei=rKVBWJ3DG6jU8AfT6oqoAw
+// Content-Length: 261
+// Cache-Control: private
+// Date: Fri, 02 Dec 2016 16:47:40 GMT
+```
+
+## TCP
 
 ```swift
 #if os(Linux)

@@ -15,7 +15,7 @@ public final class HTTPServer {
             do {
                 let parser = MessageParser(mode: .request)
                 
-                while true {
+                while !clientSocket.isClosed {
                     let bytes = try clientSocket.read()
                     for message in try parser.parse(bytes) {
                         handler(message as! Request, ResponrWriter(stream: clientSocket))

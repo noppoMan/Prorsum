@@ -10,7 +10,7 @@ public final class HTTPServer {
     
     var server: TCPServer? = nil
     
-    public init(_ handler: @escaping (Request, DuplexStream) -> Void) throws {
+    public init(_ handler: @escaping (Request, ResponrWriter) -> Void) throws {
         server = try TCPServer { [unowned self] clientSocket in
             do {
                 let parser = MessageParser(mode: .request)
@@ -18,7 +18,7 @@ public final class HTTPServer {
                 while true {
                     let bytes = try clientSocket.read()
                     for message in try parser.parse(bytes) {
-                        handler(message as! Request, clientSocket)
+                        handler(message as! Request, ResponrWriter(stream: clientSocket))
                     }
                 }
             } catch {

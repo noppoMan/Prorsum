@@ -32,7 +32,7 @@ class TCPTests: XCTestCase {
         go {
             sleep(1)
             let client = try! TCP()
-            try! client.connect(host: "0.0.0", port: 8080)
+            try! client.connect(host: "0.0.0", port: 3332)
             
             var received = Bytes()
             
@@ -43,7 +43,7 @@ class TCPTests: XCTestCase {
             server.terminate()
         }
         
-        try! server.bind(host: "0.0.0.0", port: 8080)
+        try! server.bind(host: "0.0.0.0", port: 3332)
         try! server.listen()
     }
     

@@ -40,4 +40,8 @@ public final class HTTPServer {
         try server?.listen(backlog: backlog)
     }
     
+    public func terminate() {
+        server?.terminate()
+    }
+    
 }

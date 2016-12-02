@@ -13,6 +13,7 @@
 #endif
 
 import Foundation
+import Prorsum
 
 let allTests = [
     channelTest

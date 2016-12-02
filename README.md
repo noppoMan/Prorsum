@@ -13,7 +13,8 @@ A Go like concurrent system + networking/http libraries for Swif
 - [x] Select
 - [ ] Timers
 - [x] TCP Server/Client
-- [ ] HTTP Server/Client
+- [x] HTTP Server
+- [ ] HTTP Client
 
 ## Installation
 
@@ -171,9 +172,30 @@ forSelect { done in
 
 ## Networking
 
-### TCP
+### HTTP Server
 
-#### Echo Server
+```swift
+let server = try! HTTPServer { (request, writer) in
+    do {
+        let response = Response(
+            headers: ["Server": "Prorsum Micro HTTP Server"],
+            body: .buffer("hello".data)
+        )
+        
+        try writer.serialize(response)
+        
+        writer.close()
+    } catch {
+        fatalError("\(error)")
+    }
+}
+
+try! server.bind(host: "0.0.0.0", port: 3000)
+print("Server listening at 0.0.0.0:3000")
+try! server.listen() //start run loop
+```
+
+### TCP
 
 ```swift
 #if os(Linux)
@@ -208,38 +230,6 @@ go {
 try! server.bind(host: "0.0.0.0", port: 3000)
 try! server.listen() //start run loop
 ```
-
-
-### HTTP Server
-
-```swift
-#if os(Linux)
-    import Glibc
-#else
-    import Darwin.C
-#endif
-
-let server = try! HTTPServer { (request, writer) in
-    do {
-        let response = Response(
-            headers: ["Server": "Prorsum Micro HTTP Server"],
-            body: .buffer("hello".data)
-        )
-
-        let serializer = ResponseSerializer(stream: writer)
-        try serializer.serialize(response, deadline: 0)
-
-        writer.close()
-    } catch {
-        fatalError("\(error)")
-    }
-}
-
-try! server.bind(host: "0.0.0.0", port: 3000)
-print("Server listening at 0.0.0.0:3000")
-try! server.listen() //start run loop
-```
-
 
 ## License
 Prorsum is released under the MIT license. See LICENSE for details.

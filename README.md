@@ -226,22 +226,22 @@ print(response)
     import Darwin.C
 #endif
 
-let server = try! TCPServer { clientSocket in
-    while !clientSocket.isClosed {
-        let bytes = try! clientSocket.read()
-        try! clientSocket.write(bytes)
-        clientSocket.close()
+let server = try! TCPServer { clientStream in
+    while !clientStream.isClosed {
+        let bytes = try! clientStream.read()
+        try! clientStream.write(bytes)
+        clientStream.close()
     }
 }
 
 // setup client
 go {
     sleep(1)
-    let client = try! TCP()
+    let client = try! TCPSocket()
     try! client.connect(host: "0.0.0.0", port: 3000)
     while !client.isClosed {
         try! client.write(Array("hello".utf8))
-        let bytes = try! client.read()
+        let bytes = try! client.recv()
         if !bytes.isEmpty {
             print(String(bytes: bytes, encoding: .utf8))
         }

@@ -15,6 +15,8 @@ let sys_listen = Glibc.listen
 let sys_connect = Glibc.connect
 let sys_close = Glibc.close
 let sys_socket = Glibc.socket
+let sys_recv = Glibc.recv
+let sys_send = Glibc.send
     
 let SOCK_NOSIGNAL = Glibc.MSG_NOSIGNAL
 let SOCK_STREAM = Int32(Glibc.SOCK_STREAM.rawValue)
@@ -33,6 +35,8 @@ let sys_listen = Darwin.listen
 let sys_connect = Darwin.connect
 let sys_close = Darwin.close
 let sys_socket = Darwin.socket
+let sys_recv = Darwin.recv
+let sys_send = Darwin.send
     
 let SOCK_NOSIGNAL = Darwin.SO_NOSIGPIPE
 let SOCK_STREAM = Darwin.SOCK_STREAM

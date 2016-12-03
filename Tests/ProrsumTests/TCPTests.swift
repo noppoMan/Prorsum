@@ -24,20 +24,20 @@ class TCPTests: XCTestCase {
     }
     
     func testTCPConnectAndRead() {
-        let server = try! TCPServer { clientSocket in
-            try! clientSocket.write(Array("hello".utf8))
-            clientSocket.close()
+        let server = try! TCPServer { clientStream in
+            try! clientStream.write(Array("hello".utf8))
+            clientStream.close()
         }
         
         go {
             sleep(1)
-            let client = try! TCP()
+            let client = try! TCPSocket()
             try! client.connect(host: "0.0.0", port: 3332)
             
             var received = Bytes()
             
             while !client.isClosed {
-                received.append(contentsOf: try! client.read())
+                received.append(contentsOf: try! client.recv())
             }
             XCTAssertEqual(received, [104, 101, 108, 108, 111])
             server.terminate()
@@ -56,11 +56,11 @@ class TCPTests: XCTestCase {
         
         go {
             sleep(1)
-            let client = try! TCP()
+            let client = try! TCPSocket()
             try! client.connect(host: "0.0.0", port: 8080)
             
             while !client.isClosed {
-                let bytes = try! client.read(upTo: 1)
+                let bytes = try! client.recv(upTo: 1)
                 if bytes.count != 0 {
                     XCTAssertEqual(bytes.count, 1)
                 }

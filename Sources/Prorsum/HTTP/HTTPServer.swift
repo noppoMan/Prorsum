@@ -11,19 +11,19 @@ public final class HTTPServer {
     var server: TCPServer? = nil
     
     public init(_ handler: @escaping (Request, ResponrWriter) -> Void) throws {
-        server = try TCPServer { [unowned self] clientSocket in
+        server = try TCPServer { [unowned self] clientStream in
             do {
                 let parser = MessageParser(mode: .request)
                 
-                while !clientSocket.isClosed {
-                    let bytes = try clientSocket.read()
+                while !clientStream.isClosed {
+                    let bytes = try clientStream.read()
                     for message in try parser.parse(bytes) {
-                        handler(message as! Request, ResponrWriter(stream: clientSocket))
+                        handler(message as! Request, ResponrWriter(stream: clientStream))
                     }
                 }
             } catch {
                 self.server?.onError?(error)
-                clientSocket.close()
+                clientStream.close()
             }
         }
     }

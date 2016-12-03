@@ -11,7 +11,7 @@ Swift has Grand Centaral Dispatch(GCD), I thought that if I could successfully a
 ### VS C10K Problem
 Prorsum's HTTP Server architecure is Event Driven master + Multithreading Request Handler.
 In a DispatchQueue, you can write asynchronous I/O with synchronous syntax with `go()` + `Channel<Element>`.  
-No more callback hell.
+Easy to make codes solve C10K without callbacks.
 ```
                                                  +-----------------+
                                              |-- | Request Handler |

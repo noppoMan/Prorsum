@@ -1,7 +1,11 @@
 # Prorsum
-A Go like concurrent system + networking/http libraries for Swif
+A Go like concurrent system + networking/http libraries for Swif.
 
-⚠️ Prorsum is in early development and pretty experimental.
+### Why Prorsum?
+The reason why I started this project is because I felt it was very difficult to handle asynchronous io with Swift in the project called Slimane which I had previously made. In the Asynchronous paradigm in Swift, We need to often use the capture list well for closures and sometimes retain the object(Connection etc..) to avoid to release by ARC.
+Then I thought Go's concurrent/parallel and synchronous mecanism is suitable model for present stage of Swift(If you want to write any Server..).
+Swift has Grand Centaral Dispatch(GCD), I thought that if I could successfully accomplish the memory barrier, I could bring concurrent/parallel mecanism to Swift that provided by Goroutine+Channel in Go.
+(But... Prorsum is not Goroutine. Context Switch is done on the OS side, Prorsum doesn't have Corotuine. It just has thread safe shared memory mechanism(It works on the GCD) that is heavily inspired by Go.)
 
 ## Features
 

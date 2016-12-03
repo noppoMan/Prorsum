@@ -15,12 +15,12 @@ public enum HTTPClientError: Error {
 
 public class HTTPClient {
     
-    let stream: TCP
+    let stream: TCPStream
     
     let url: URL
     
     public init(url: URL) throws {
-        self.stream = try TCP()
+        self.stream = try TCPStream()
         if url.scheme != "http" && url.scheme != "https" {
             throw HTTPClientError.invalidSchema
         }
@@ -34,7 +34,7 @@ public class HTTPClient {
         
         let hostname = try DNS(host: host).resolve()
         let port = url.scheme == "https" ? 443 : url.port ?? 80
-        try self.stream.connect(host: hostname, port: UInt(port))
+        try self.stream.socket.connect(host: hostname, port: UInt(port))
     }
     
     public func request(method: Request.Method = .get, headers: Headers = [:], body: Data = Data(), deadline: Double = 0) throws -> Response {

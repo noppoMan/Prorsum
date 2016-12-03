@@ -40,6 +40,10 @@ extension SockType {
     }
 }
 
+public enum SocketError {
+    case alreadyClosed
+}
+
 public class Socket {
     
     public let fd: Int32
@@ -47,6 +51,8 @@ public class Socket {
     public let addressFamily: AddressFamily
     
     public let sockType: SockType
+    
+    public var isClosed = false
     
     public init(fd: Int32, addressFamily: AddressFamily, sockType: SockType){
         self.addressFamily = addressFamily
@@ -76,8 +82,42 @@ public class Socket {
         }
     }
     
+    public func recv(upTo numOfBytes: Int = 1024, deadline: Double = 0) throws -> Bytes {
+        if isClosed {
+            throw StreamError.alreadyClosed
+        }
+        
+        try self.setBlocking(shouldBlock: true)
+        
+        var buf = Bytes(repeating: 0, count: numOfBytes)
+        let bytesRead = sys_recv(fd, &buf, numOfBytes, 0)
+        
+        guard bytesRead > -1 else {
+            throw SystemError.lastOperationError!
+        }
+        
+        if bytesRead == 0 {
+            isClosed = true
+        }
+        
+        return Bytes(buf[0..<bytesRead])
+    }
+    
+    public func send(_ bytes: Bytes, deadline: Double = 0) throws {
+        if isClosed {
+            throw StreamError.alreadyClosed
+        }
+        
+        let len = bytes.count
+        let result = sys_send(fd, bytes, len, Int32(SOCK_NOSIGNAL))
+        guard result == len else {
+            throw SystemError.lastOperationError!
+        }
+    }
+    
     public func close(){
         _ = sys_close(fd) // no error
+        self.isClosed = true
     }
     
 }

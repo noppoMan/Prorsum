@@ -9,24 +9,24 @@
 import Foundation
 import Dispatch
 
-public class TCPServer {
-    let socket: TCP
+public final class TCPServer {
+    let stream: TCPStream
     
-    let handler: (TCP) -> Void
+    let handler: (TCPStream) -> Void
     
     var watcher: DispatchSourceRead?
     
     let loop: CFRunLoop
     
     var isClosed: Bool {
-        return socket.isClosed
+        return stream.isClosed
     }
     
     var onError: ((Error) -> Void)? = nil
     
-    public init(_ handler: @escaping (TCP) -> Void) throws {
+    public init(_ handler: @escaping (TCPStream) -> Void) throws {
         signal(SIGPIPE, SIG_IGN)
-        socket = try TCP()
+        stream = try TCPStream()
         self.handler = handler
         loop = CFRunLoopGetCurrent()
     }
@@ -34,7 +34,7 @@ public class TCPServer {
     public func bind(host: String, port: UInt) throws {
         var reuseAddr = 1
         let r = setsockopt(
-            socket.socket.fd,
+            stream.socket.fd,
             SOL_SOCKET,
             SO_REUSEADDR,
             &reuseAddr,
@@ -45,17 +45,17 @@ public class TCPServer {
             throw error
         }
         
-        try socket.bind(host: host, port: port)
+        try stream.socket.bind(host: host, port: port)
     }
     
     public func listen(backlog: Int = 1024) throws {
-        try socket.listen(backlog: backlog)
+        try stream.socket.listen(backlog: backlog)
         
-        watcher = DispatchSource.makeReadSource(fileDescriptor: socket.socket.fd, queue: .main)
+        watcher = DispatchSource.makeReadSource(fileDescriptor: stream.socket.fd, queue: .main)
         
         watcher?.setEventHandler { [unowned self] in
             do {
-                let client = try self.socket.accept()
+                let client = try TCPStream(socket: self.stream.socket.accept())
                 go {
                     self.handler(client)
                 }
@@ -76,8 +76,7 @@ public class TCPServer {
     
     public func terminate(){
         watcher?.cancel()
-        socket.close()
-        
+        stream.socket.close()
         CFRunLoopStop(loop)
     }
 }

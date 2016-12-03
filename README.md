@@ -3,10 +3,9 @@ A Go like concurrent system + networking/http libraries for Swif.
 
 ### Why Prorsum?
 The reason why I started this project is because I felt it was very difficult to handle asynchronous io with Swift in the project called Slimane which I had previously made. In the Asynchronous paradigm in Swift, We need to often use the capture list well for closures and sometimes retain the object(Connection etc..) to avoid to release by ARC.
-Then I thought Go's concurrent/parallel and synchronous mecanism is suitable model for the present stage of Swift(If you want to write any Server..).
-Swift has Grand Centaral Dispatch(GCD), I thought that if I could successfully accomplish the memory barrier, I could bring the Go Style synchronous model(Connects GCDs to each other) to Swift that provided by Goroutine+Channel.
+Then I thought Go's concurrent/parallel and synchronous mecanism is suitable model for the present stage of Swift(If you want to write Server on the MultiCore Machine). Because we can easy to make async operations wituhout callback chains, can use full cores with symple symtax and easy to share the memory via Channel between a Thread and a Thread.
 
-(Prorsum is not Goroutine. Context Switch is done on the OS side, Prorsum doesn't have Corotuine. It just has thread safe shared memory mechanism(It works on the GCD) that is heavily inspired by Go.)
+**(Prorsum is not Goroutine. Context Switch is done on the OS side, Prorsum doesn't have Corotuine. It just has thread safe  shared memory mechanism(It works on the GCD) that is heavily inspired by Go.)**
 
 ### VS C10K Problem
 Prorsum's HTTP Server architecure is Event Driven master + Multithreading Request Handler.

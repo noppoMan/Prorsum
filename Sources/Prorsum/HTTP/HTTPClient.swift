@@ -7,34 +7,64 @@
 //
 
 import Foundation
+import SSLService
 
 public enum HTTPClientError: Error {
     case invalidSchema
     case hostRequired
+    case maxRedirectionExceeded(max: Int)
 }
 
 public class HTTPClient {
     
-    let stream: TCPStream
+    public static var maxRedirection = 10
     
-    let url: URL
+    let stream: DuplexStream
+    
+    public private(set) var url: URL
+    
+    public var followRedirect = true
+    
+    private var currentRedirectCount = 0
+    
+    public let isSecure: Bool
+    
+    public var port: UInt {
+        return isSecure ? 443 : UInt(url.port ?? 80)
+    }
+    
+    private convenience init(url: URL, redirectCount: Int = 0) throws {
+        if redirectCount >= HTTPClient.maxRedirection {
+            throw HTTPClientError.maxRedirectionExceeded(max: HTTPClient.maxRedirection)
+        }
+        
+        try self.init(url: url)
+        self.currentRedirectCount = redirectCount
+    }
     
     public init(url: URL) throws {
-        self.stream = try TCPStream()
         if url.scheme != "http" && url.scheme != "https" {
             throw HTTPClientError.invalidSchema
         }
+        
+        self.isSecure = url.scheme == "https"
         self.url = url
-    }
-    
-    public func connect() throws {
+        
         guard let host = url.host else {
             throw HTTPClientError.hostRequired
         }
         
-        let hostname = try DNS(host: host).resolve()
-        let port = url.scheme == "https" ? 443 : url.port ?? 80
-        try self.stream.socket.connect(host: hostname, port: UInt(port))
+        let port = isSecure ? 443 : UInt(url.port ?? 80)
+        
+        if isSecure {
+            self.stream = try SSLTCPStream(host: host, port: port)
+        } else {
+            self.stream = try TCPStream(host: DNS(host: host).resolve().inets().first!.host, port: port)
+        }
+    }
+    
+    public func open(deadline: Double = 0) throws {
+        try self.stream.open(deadline: deadline)
     }
     
     public func request(method: Request.Method = .get, headers: Headers = [:], body: Data = Data(), deadline: Double = 0) throws -> Response {
@@ -68,11 +98,34 @@ public class HTTPClient {
         let parser = MessageParser(mode: .response)
         
         while !stream.isClosed {
-            guard let message = try parser.parse(stream.read()).first else {
+            guard let message = try parser.parse(stream.read(upTo: 2048)).first else {
                 continue
             }
             
-            return message as! Response
+            let response = message as! Response
+            
+            if response.isRedirection, followRedirect, let location = response.headers["Location"], let newUrl = URL(string: location) {
+                
+                var newUrl = newUrl
+                if newUrl.host == nil {
+                    newUrl = URL(string: "\(self.url.scheme!)://\(self.url.host!)\(newUrl)")!
+                }
+                
+                if newUrl.host == self.url.host, newUrl.scheme == self.url.scheme {
+                    //reuse connection
+                    self.url = newUrl
+                    currentRedirectCount+=1
+                    return try self.request()
+                } else {
+                    // Try to get the next content with a new connection.
+                    self.stream.close()
+                    let client = try HTTPClient(url:newUrl, redirectCount: currentRedirectCount+1)
+                    try client.open()
+                    return try client.request()
+                }
+            }
+            
+            return response
         }
         
         throw StreamError.alreadyClosed

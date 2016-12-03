@@ -29,7 +29,7 @@ class HTTPServerTests: XCTestCase {
             sleep(1)
             let url = URL(string: "http://127.0.0.1:3333")
             let client = try! HTTPClient(url: url!)
-            try! client.connect()
+            try! client.open()
             let response = try! client.request()
             
             switch response.body {

@@ -15,11 +15,12 @@ A Go like concurrent system + networking/http libraries for Swif
 - [ ] Timers
 
 #### Networking/HTTP
-- [x] DNS
+- [x] DNS ipv6/v4
 - [x] TCP Server
 - [x] TCP Client
 - [x] HTTP Server
 - [x] HTTP Client
+- [x] HTTPS Client
 
 ## Installation
 
@@ -200,21 +201,29 @@ print("Server listening at 0.0.0.0:3000")
 try! server.listen() //start run loop
 ```
 
-## HTTP Client
+## HTTP/HTTPS Client
 
 ```swift
-let url = URL(string: "http://google.com")
+let url = URL(string: "https://google.com")
 let client = try! HTTPClient(url: url!)
-try! client.connect()
+try! client.open()
 let response = try! client.request()
 
 print(response)
-// HTTP/1.1 302 Found
-// Content-Type: text/html; charset=UTF-8
-// Location: http://www.google.co.jp/?gfe_rd=cr&ei=rKVBWJ3DG6jU8AfT6oqoAw
-// Content-Length: 261
-// Cache-Control: private
-// Date: Fri, 02 Dec 2016 16:47:40 GMT
+// HTTP/1.1 200 OK
+// Set-Cookie: NID=91=CPfJo7FsoC_HXmq7kLrs-e0DhR0lAaHcYc8GFxhazE5OXdc3uPvs22oz_UP3Bcd2mZDczDgtW80OrjC6JigVCGIhyhXSD7e1RA7rkinF3zxUNsDnAtagvs5pbZSjXuZE; expires=Sun, 04-Jun-2017 16:21:39 GMT; path=/; domain=.google.co.jp; HttpOnly
+// Transfer-Encoding: chunked
+// Accept-Ranges: none
+// Date: Sat, 03 Dec 2016 16:21:39 GMT
+// Content-Type: text/html; charset=Shift_JIS
+// Expires: -1
+// Alt-Svc: quic=":443"; ma=2592000; v="36,35,34"
+// Cache-Control: private, max-age=0
+// Server: gws
+// X-XSS-Protection: 1; mode=block
+// Vary: Accept-Encoding
+// X-Frame-Options: SAMEORIGIN
+// P3P: CP="This is not a P3P policy! See https://www.google.com/support/accounts/answer/151657?hl=en for more info."
 ```
 
 ## TCP

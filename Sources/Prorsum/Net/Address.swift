@@ -197,3 +197,29 @@ public class Address {
         sockStorageRef?.deallocate(capacity: 1)
     }
 }
+
+
+extension Collection where Self.Iterator.Element == Address {
+    
+    public func inets() -> [Address] {
+        return self.filter {
+            switch $0.addressFamily {
+            case .inet:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+    
+    public func inet6s() -> [Address] {
+        return self.filter {
+            switch $0.addressFamily {
+            case .inet6:
+                return true
+            default:
+                return false
+            }
+        }
+    }
+}

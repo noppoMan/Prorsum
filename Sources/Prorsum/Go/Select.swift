@@ -12,10 +12,10 @@
     import Darwin.C
 #endif
 
-func randomInts(max : Int, addition: Int = 0) -> [Int]{
+func randomInts(max : Int) -> [Int]{
     var ints = [Int](repeating:0, count: max)
     for i in 0..<max {
-        ints[i] = i + addition
+        ints[i] = i
     }
     for i in 0..<max {
         let r = Int(arc4random()) % max
@@ -82,8 +82,8 @@ private class Select {
     init(){}
     
     func select(){
-        for i in randomInts(max: contexts.count, addition: 1) {
-            if let ctx = contexts[i], ctx.couldReceiveMsgFromChannel() {
+        for key in contexts.keys {
+            if key != 0, let ctx = contexts[key], ctx.couldReceiveMsgFromChannel() {
                 ctx.callWhenOrOtherwiseIfNeeded()
                 return
             }

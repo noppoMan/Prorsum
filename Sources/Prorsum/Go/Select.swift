@@ -104,10 +104,8 @@ private class Select {
         defer {
             cond.mutex.unlock()
         }
-        
-        if contexts[chan.id] != nil {
-            return
-        }
+
+        guard contexts[chan.id] == nil else { return }
         
         let context = Context<T>(chan: chan, when: handler)
         contexts[chan.id] = context
@@ -118,9 +116,9 @@ private class Select {
         defer {
             cond.mutex.unlock()
         }
-        if contexts[0] != nil {
-            return
-        }
+
+        guard contexts[0] == nil else { return }
+
         contexts[0] = Context<Void>(otherwise: handler)
     }
 }

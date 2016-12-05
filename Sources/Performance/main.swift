@@ -15,13 +15,6 @@
 import Foundation
 import Prorsum
 
-let url = URL(string: "https://google.com")
-let client = try! HTTPClient(url: url!)
-try! client.open()
-let response = try! client.request()
-
-print(response)
-
 let allTests = [
     channelTest
 ]

@@ -82,8 +82,8 @@ private class Select {
     init(){}
     
     func select(){
-        for i in contexts.enumerated().map({$0.1.key}).filter({ $0 != 0 }).reversed() {
-            if let ctx = contexts[i], ctx.couldReceiveMsgFromChannel() {
+        for key in contexts.keys {
+            if key != 0, let ctx = contexts[key], ctx.couldReceiveMsgFromChannel() {
                 ctx.callWhenOrOtherwiseIfNeeded()
                 return
             }
@@ -104,10 +104,8 @@ private class Select {
         defer {
             cond.mutex.unlock()
         }
-        
-        if contexts[chan.id] != nil {
-            return
-        }
+
+        guard contexts[chan.id] == nil else { return }
         
         let context = Context<T>(chan: chan, when: handler)
         contexts[chan.id] = context
@@ -118,9 +116,9 @@ private class Select {
         defer {
             cond.mutex.unlock()
         }
-        if contexts[0] != nil {
-            return
-        }
+
+        guard contexts[0] == nil else { return }
+
         contexts[0] = Context<Void>(otherwise: handler)
     }
 }

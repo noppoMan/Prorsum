@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import SSLService
 
 public enum HTTPClientError: Error {
     case invalidSchema

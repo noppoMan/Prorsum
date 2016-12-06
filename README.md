@@ -1,6 +1,8 @@
 # Prorsum
 A Go like concurrent system + networking/http libraries for Swif.
 
+<img src="https://camo.githubusercontent.com/93de6573350b91e48ab570a4fe710e4e8baa38b8/687474703a2f2f696d672e736869656c64732e696f2f62616467652f73776966742d332e302d627269676874677265656e2e737667"> <img src="https://travis-ci.org/noppoMan/Prorsum.svg?branch=master">
+
 ### Why Prorsum?
 The reason why I started this project is because I felt it was very difficult to handle asynchronous io with Swift in the project called Slimane which I had previously made. In the Asynchronous paradigm in Swift, We need to often use the capture list well for closures and sometimes retain the object(Connection etc..) to avoid to release by ARC.
 Then I thought Go's concurrent/parallel and synchronous mecanism is suitable model for the present stage of Swift(If you want to write Server on the MultiCore Machine). Because we can easy to make async operations wituhout callback chains, can use full cores with symple symtax and easy to share the memory via Channel between a Thread and a Thread.
@@ -11,6 +13,7 @@ Then I thought Go's concurrent/parallel and synchronous mecanism is suitable mod
 Prorsum's HTTP Server architecure is Event Driven master + Multithreading Request Handler.
 In a DispatchQueue, you can write asynchronous I/O with synchronous syntax with `go()` + `Channel<Element>`.  
 Easy to make codes solve C10K without callbacks.
+
 ```
                                                  +-----------------+
                                              |-- | Request Handler |
@@ -201,6 +204,9 @@ forSelect { done in
 ## HTTP Server
 
 ```swift
+import Prorsum
+import Foundation
+
 let server = try! HTTPServer { (request, writer) in
     do {
         let response = Response(
@@ -218,12 +224,16 @@ let server = try! HTTPServer { (request, writer) in
 
 try! server.bind(host: "0.0.0.0", port: 3000)
 print("Server listening at 0.0.0.0:3000")
-try! server.listen() //start run loop
+try! server.listen()
+
+RunLoop.main.run() //start run loop
 ```
 
 ## HTTP/HTTPS Client
 
 ```swift
+import Prorsum
+
 let url = URL(string: "https://google.com")
 let client = try! HTTPClient(url: url!)
 try! client.open()
@@ -255,6 +265,9 @@ print(response)
     import Darwin.C
 #endif
 
+import Prorsum
+import Foundation
+
 let server = try! TCPServer { clientStream in
     while !clientStream.isClosed {
         let bytes = try! clientStream.read()
@@ -280,6 +293,8 @@ go {
 
 try! server.bind(host: "0.0.0.0", port: 3000)
 try! server.listen() //start run loop
+
+RunLoop.main.run() //start run loop
 ```
 
 ## License

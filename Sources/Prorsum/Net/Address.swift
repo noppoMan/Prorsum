@@ -140,17 +140,13 @@ public class Address {
         }
         
         var addrInfoRef: UnsafeMutablePointer<addrinfo>?
-        var hints = addrinfo(
-            ai_flags: AI_PASSIVE,
-            ai_family: addressFamily.rawValue,
-            ai_socktype: sockType.rawValue,
-            ai_protocol: protocolType,
-            ai_addrlen: 0,
-            ai_canonname: nil,
-            ai_addr: nil,
-            ai_next: nil
-        )
-        
+        var hints = addrinfo()
+        hints.ai_flags = AI_PASSIVE
+        hints.ai_family = addressFamily.rawValue
+        hints.ai_socktype = sockType.rawValue
+        hints.ai_protocol = protocolType
+        hints.ai_addrlen = 0
+
         let ret = getaddrinfo(host, String(port), &hints, &addrInfoRef)
         guard ret == 0 else {
             throw SystemError.lastOperationError!

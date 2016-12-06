@@ -6,7 +6,18 @@
 //
 //
 
-import Foundation.NSThread
+import Foundation
+
+#if os(Linux)
+    import func CoreFoundation._CFIsMainThread
+    
+    // avoid unimplemented error
+    private extension Thread {
+        static var isMainThread: Bool {
+            return _CFIsMainThread()
+        }
+    }
+#endif
 
 class IDGenerator {
     static let shared = IDGenerator()
@@ -69,8 +80,8 @@ public class Channel<T> {
         
         messageQ.push(message)
         cond.broadcast()
-        
-        if Thread.current.isMainThread, messageQ.count > capacity {
+
+        if Thread.isMainThread, messageQ.count > capacity {
             throw ChannelError.bufferSizeLimitExceeded(capacity)
         }
     }

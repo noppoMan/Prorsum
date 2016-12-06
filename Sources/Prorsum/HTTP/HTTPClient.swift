@@ -58,7 +58,8 @@ public class HTTPClient {
         if isSecure {
             self.stream = try SSLTCPStream(host: host, port: port)
         } else {
-            self.stream = try TCPStream(host: DNS(host: host).resolve().inets().first!.host, port: port)
+            let resolveAddress = try Address(host: host, port: port).resolve(sockType: .stream, protocolType: IPPROTO_TCP)
+            self.stream = try TCPStream(host: resolveAddress.host, port: port)
         }
     }
     
@@ -107,7 +108,7 @@ public class HTTPClient {
                 
                 var newUrl = newUrl
                 if newUrl.host == nil {
-                    newUrl = URL(string: "\(self.url.scheme!)://\(self.url.host!)\(newUrl)")!
+                    newUrl = URL(string: "\(self.url.scheme!)://\(self.url.host!)\(newUrl.absoluteString)")!
                 }
                 
                 if newUrl.host == self.url.host, newUrl.scheme == self.url.scheme {

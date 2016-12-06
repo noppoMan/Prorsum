@@ -12,21 +12,6 @@
     import Darwin.C
 #endif
 
-func randomInts(max : Int) -> [Int]{
-    var ints = [Int](repeating:0, count: max)
-    for i in 0..<max {
-        ints[i] = i
-    }
-    for i in 0..<max {
-        let r = Int(arc4random()) % max
-        let t = ints[i]
-        ints[i] = ints[r]
-        ints[r] = t
-    }
-    return ints
-}
-
-
 private protocol AnyContext {
     func couldReceiveMsgFromChannel() -> Bool
     func callWhenOrOtherwiseIfNeeded()

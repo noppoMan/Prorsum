@@ -5,8 +5,13 @@
 //  Created by Yuki Takei on 2016/11/24.
 //
 //
-
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin.C
+#endif
 import XCTest
+import Foundation
 @testable import Prorsum
 
 class ChannelTests: XCTestCase {

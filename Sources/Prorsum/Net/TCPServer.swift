@@ -16,8 +16,6 @@ public final class TCPServer {
     
     var watcher: DispatchSourceRead?
     
-    let loop: CFRunLoop
-    
     var isClosed: Bool {
         return stream.isClosed
     }
@@ -28,7 +26,6 @@ public final class TCPServer {
         signal(SIGPIPE, SIG_IGN)
         stream = try TCPStream()
         self.handler = handler
-        loop = CFRunLoopGetCurrent()
     }
     
     public func bind(host: String, port: UInt) throws {
@@ -67,7 +64,6 @@ public final class TCPServer {
         }
         
         watcher?.resume()
-        CFRunLoopRun()
     }
     
     public func onError(_ handler: @escaping (Error) -> Void){
@@ -77,6 +73,5 @@ public final class TCPServer {
     public func terminate(){
         watcher?.cancel()
         stream.socket.close()
-        CFRunLoopStop(loop)
     }
 }

@@ -1,0 +1,15 @@
+os:
+  - linux
+  - osx
+language: generic
+sudo: required
+dist: trusty
+osx_image: xcode8
+
+install:
+  - source Scripts/install-swift.sh
+
+script:
+  - swift build
+  - swift build -c release
+  - swift test

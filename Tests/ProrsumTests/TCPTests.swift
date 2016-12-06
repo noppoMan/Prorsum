@@ -11,8 +11,8 @@
 #else
     import Darwin.C
 #endif
-
 import XCTest
+import Foundation
 @testable import Prorsum
 
 class TCPTests: XCTestCase {

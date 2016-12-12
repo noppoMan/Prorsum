@@ -6,7 +6,7 @@
 //
 //
 
-public class RequestSerializer {
+public struct RequestSerializer {
     let stream: DuplexStream
     let bufferSize: Int
     

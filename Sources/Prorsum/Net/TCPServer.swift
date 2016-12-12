@@ -9,6 +9,10 @@
 import Foundation
 import Dispatch
 
+private let sourceReadQ = DispatchQueue(label: "prorsum.net.source-read.queue")
+
+private let tcpIncommingRequestHandleQ = DispatchQueue(label: "prorsum.tcp.concurrent-queue", attributes: .concurrent)
+
 public final class TCPServer {
     let stream: TCPStream
     
@@ -45,19 +49,21 @@ public final class TCPServer {
         try stream.socket.bind(host: host, port: port)
     }
     
+    /**
+     * Kitura HTTPServerのように、acceptはループで行い、read/writeを非同期で
+     * DispatchWorkItemを用いている模様
+     */
     public func listen(backlog: Int = 1024) throws {
         try stream.socket.listen(backlog: backlog)
         
-        watcher = DispatchSource.makeReadSource(fileDescriptor: stream.socket.fd, queue: .main)
+        watcher = DispatchSource.makeReadSource(fileDescriptor: stream.socket.fd, queue: sourceReadQ)
         
         watcher?.setEventHandler { [unowned self] in
-            do {
-                let client = try TCPStream(socket: self.stream.socket.accept())
-                go {
+            tcpIncommingRequestHandleQ.async {
+                do {
+                    let client = try TCPStream(socket: self.stream.socket.accept())
                     self.handler(client)
-                }
-            } catch {
-                go {
+                } catch {
                     self.onError?(error)
                 }
             }

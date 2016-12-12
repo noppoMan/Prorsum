@@ -6,7 +6,7 @@
 //
 //
 
-public class RequestWriter {
+public struct RequestWriter {
     
     let stream: DuplexStream
     

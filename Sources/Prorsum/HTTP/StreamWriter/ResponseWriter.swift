@@ -6,7 +6,7 @@
 //
 //
 
-public class ResponrWriter {
+public struct ResponrWriter {
     
     let stream: DuplexStream
     

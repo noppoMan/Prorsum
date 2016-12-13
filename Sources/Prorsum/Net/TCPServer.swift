@@ -49,10 +49,6 @@ public final class TCPServer {
         try stream.socket.bind(host: host, port: port)
     }
     
-    /**
-     * Kitura HTTPServerのように、acceptはループで行い、read/writeを非同期で
-     * DispatchWorkItemを用いている模様
-     */
     public func listen(backlog: Int = 1024) throws {
         try stream.socket.listen(backlog: backlog)
         

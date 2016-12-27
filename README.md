@@ -43,6 +43,7 @@ Easy to make codes solve C10K without callbacks.
 - [x] HTTP Server
 - [x] HTTP Client
 - [x] HTTPS Client
+- [x] WebSocket
 
 ## Installation
 
@@ -295,6 +296,55 @@ try! server.listen() //start run loop
 
 RunLoop.main.run() //start run loop
 ```
+
+## Websocket
+
+Here is a Websocket Echo Server Example.
+
+```swift
+#if os(Linux)
+    import Glibc
+#else
+    import Darwin.C
+#endif
+
+import Foundation
+import Prorsum
+
+let server = try! HTTPServer { (request, writer) in
+    do {
+        let response: Response
+        if request.isWebSocket {
+            response = try request.upgradeToWebSocket { request, websocket in
+                websocket.onText {
+                    print("received: \($0)")
+                    try! websocket.send($0)
+                }
+            }
+        } else {
+            response = Response(
+                headers: ["Server": "Prorsum Micro HTTP Server"],
+                body: .buffer("hello".data)
+            )
+        }
+
+        try writer.serialize(response)
+
+        try response.upgradeConnection?(request, writer.stream)
+
+        writer.close()
+    } catch {
+        fatalError("\(error)")
+    }
+}
+
+try! server.bind(host: "0.0.0.0", port: 8080)
+print("Server listening at 0.0.0.0:8080")
+try! server.listen()
+
+RunLoop.main.run()
+```
+
 
 ## License
 Prorsum is released under the MIT license. See LICENSE for details.

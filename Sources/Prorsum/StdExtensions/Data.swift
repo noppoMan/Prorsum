@@ -18,6 +18,10 @@ extension Data {
             [UInt8](UnsafeBufferPointer(start: $0, count: data.count))
         }
     }
+    
+    public subscript(bounds: CountableRange<Int>) -> Data {
+        return Data(bytes[bounds])
+    }
 }
 
 public protocol DataRepresentable {

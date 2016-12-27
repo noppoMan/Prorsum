@@ -288,7 +288,7 @@ extension String {
 }
 
 extension UInt8 {
-    func hexadecimal() -> String {
+    public func hexadecimal() -> String {
         let hexadecimal =  String(self, radix: 16, uppercase: true)
         return (self < 16 ? "0" : "") + hexadecimal
     }

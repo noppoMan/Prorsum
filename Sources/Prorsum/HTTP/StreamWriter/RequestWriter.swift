@@ -8,7 +8,7 @@
 
 public struct RequestWriter {
     
-    let stream: DuplexStream
+    public let stream: DuplexStream
     
     public init(stream: DuplexStream){
         self.stream = stream

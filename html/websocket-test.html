@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <title>Prorsum - Websocket Test</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script>
+      $(document).ready(function(){
+        const ws = new WebSocket("ws://localhost:8080");
+
+        ws.onopen = function() {
+          console.log('connected');
+        };
+
+        setInterval(function(){
+          ws.send("hello!");
+        }, 5000);
+
+        ws.onmessage = function (evt) {
+          console.log("- received message")
+          console.log(evt.data);
+        };
+
+        ws.onclose = function() {
+           console.log('closed');
+        };
+
+      });
+    </script>
+  </head>
+  <body>
+
+  </body>
+</html>

@@ -11,6 +11,18 @@ public enum WebsocketRequestError: Error {
 }
 
 extension Request {
+    public typealias UpgradeConnection = (Response, DuplexStream) throws -> Void
+    
+    public var upgradeConnection: UpgradeConnection? {
+        return storage["request-connection-upgrade"] as? UpgradeConnection
+    }
+    
+    public mutating func upgradeConnection(_ upgrade: @escaping UpgradeConnection)  {
+        storage["request-connection-upgrade"] = upgrade
+    }
+}
+
+extension Request {
     
     public var webSocketVersion: String? {
         return headers["Sec-Websocket-Version"]

@@ -240,18 +240,6 @@ extension Request {
 }
 
 extension Request {
-    public typealias UpgradeConnection = (Response, Stream) throws -> Void
-    
-    public var upgradeConnection: UpgradeConnection? {
-        return storage["request-connection-upgrade"] as? UpgradeConnection
-    }
-    
-    public mutating func upgradeConnection(_ upgrade: @escaping UpgradeConnection)  {
-        storage["request-connection-upgrade"] = upgrade
-    }
-}
-
-extension Request {
     public var pathParameters: [String: String] {
         get {
             return storage["pathParameters"] as? [String: String] ?? [:]

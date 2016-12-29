@@ -17,3 +17,22 @@ extension Response {
         storage["response-connection-upgrade"] = upgrade
     }
 }
+
+extension Response {
+    public var webSocketVersion: String? {
+        return headers["Sec-Websocket-Version"]
+    }
+    
+    public var webSocketKey: String? {
+        return headers["Sec-Websocket-Key"]
+    }
+    
+    public var webSocketAccept: String? {
+        return headers["Sec-WebSocket-Accept"]
+    }
+    
+    public var isWebSocket: Bool {
+        return connection?.lowercased() == "upgrade"
+            && upgrade?.lowercased() == "websocket"
+    }
+}

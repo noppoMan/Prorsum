@@ -42,11 +42,11 @@ public class HTTPClient {
     }
     
     public init(url: URL) throws {
-        if url.scheme != "http" && url.scheme != "https" {
+        if url.scheme != "http" && url.scheme != "https" && url.scheme != "ws" && url.scheme != "wss"{
             throw HTTPClientError.invalidSchema
         }
         
-        self.isSecure = url.scheme == "https"
+        self.isSecure = url.scheme == "https" || url.scheme == "wss"
         self.url = url
         
         guard let host = url.host else {
@@ -67,7 +67,7 @@ public class HTTPClient {
         try self.stream.open(deadline: deadline)
     }
     
-    public func request(method: Request.Method = .get, headers: Headers = [:], body: Data = Data(), deadline: Double = 0) throws -> Response {
+    public func request(method: Request.Method = .get, headers: Headers = [:], body: Data = Data(), deadline: Double = 0, upgradeConnection: ((Response, DuplexStream) throws -> Void)? = nil) throws -> Response {
         
         var request = Request(
             method: method,
@@ -90,6 +90,10 @@ public class HTTPClient {
         
         if request.accept.isEmpty {
             request.accept = [try MediaType(string: "Accept: */*")]
+        }
+        
+        if let upgradeConnection = upgradeConnection {
+            request.upgradeConnection(upgradeConnection)
         }
         
         let serializer = RequestSerializer(stream: stream)
@@ -124,6 +128,8 @@ public class HTTPClient {
                     return try client.request()
                 }
             }
+            
+            try request.upgradeConnection?(response, stream)
             
             return response
         }

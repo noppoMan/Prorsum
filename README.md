@@ -345,6 +345,8 @@ try! server.listen()
 RunLoop.main.run()
 ```
 
+## Related Articles
+* [Rethink Appropriate Server Architecture For Swift](https://medium.com/@yukitakei/rethink-appropriate-server-architecture-for-swift-7c8513944db8#.9ii5n3yuz)
 
 ## License
 Prorsum is released under the MIT license. See LICENSE for details.

@@ -58,6 +58,9 @@ extension Request {
         var response = Response(status: .switchingProtocols, headers: headers)
         response.upgradeConnection { request, stream in
             let webSocket = WebSocket(stream: stream, mode: .server)
+            if let sid = request.headers["X-WebSocket-Session-ID"] {
+                webSocket.id = sid
+            }
             try didConnect(request, webSocket)
             try webSocket.start()
         }

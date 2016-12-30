@@ -75,6 +75,8 @@ public final class WebSocket {
     
     fileprivate let connectionTimeout: Double
     
+    public var id: String?
+    
     public init(stream: DuplexStream, mode: Mode, connectionTimeout: Double = 60) {
         self.stream = stream
         self.mode = mode

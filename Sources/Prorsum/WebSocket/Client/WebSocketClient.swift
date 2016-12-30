@@ -1,5 +1,5 @@
 //
-//  WebsocketClient.swift
+//  WebSocketClient.swift
 //  SwiftMeteor
 //
 //  Created by Yuki Takei on 2016/12/30.
@@ -8,11 +8,11 @@
 
 import Foundation
 
-public enum WebsocketClientError: Error {
+public enum WebSocketClientError: Error {
     case responseNotWebsocket
 }
 
-public class WebsocketClient {
+public class WebSocketClient {
     
     let client: HTTPClient
     let didConnect: (WebSocket) throws -> Void
@@ -40,11 +40,11 @@ public class WebsocketClient {
             guard let strongSelf = self else { return }
             
             guard response.status == .switchingProtocols && response.isWebSocket else {
-                throw WebsocketClientError.responseNotWebsocket
+                throw WebSocketClientError.responseNotWebsocket
             }
             
             guard let accept = response.webSocketAccept, accept == WebSocket.accept(key) else {
-                throw WebsocketClientError.responseNotWebsocket
+                throw WebSocketClientError.responseNotWebsocket
             }
             
             let webSocket = WebSocket(stream: stream, mode: .client, connectionTimeout: strongSelf.connectionTimeout ?? 0)

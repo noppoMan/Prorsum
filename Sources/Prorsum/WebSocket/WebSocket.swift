@@ -89,8 +89,18 @@ public final class WebSocket {
     }
     
     @discardableResult
+    public func onBinaryOnce(_ listen: @escaping EventListener<Data>.Listen) -> EventListener<Data> {
+        return binaryEventEmitter.addListener(1, listen: listen)
+    }
+    
+    @discardableResult
     public func onText(_ listen: @escaping EventListener<String>.Listen) -> EventListener<String> {
         return textEventEmitter.addListener(listen: listen)
+    }
+    
+    @discardableResult
+    public func onTextOnce(_ listen: @escaping EventListener<String>.Listen) -> EventListener<String> {
+        return textEventEmitter.addListener(1, listen: listen)
     }
     
     @discardableResult

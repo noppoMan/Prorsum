@@ -58,7 +58,7 @@ public class HTTPClient {
         if isSecure {
             self.stream = try SSLTCPStream(host: host, port: port)
         } else {
-            let resolveAddress = try Address(host: host, port: port).resolve(sockType: .stream, protocolType: IPPROTO_TCP)
+            let resolveAddress = try Address(host: host, port: port).resolve(sockType: .stream, protocolType: .tcp)
             self.stream = try TCPStream(host: resolveAddress.host, port: port)
         }
     }

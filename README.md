@@ -40,9 +40,12 @@ Easy to make codes solve C10K without callbacks.
 - [x] DNS ipv6/v4
 - [x] TCP Server
 - [x] TCP Client
+- [x] UDP Socket
+- [ ] QUIC
 - [x] HTTP Server
 - [x] HTTP Client
 - [x] HTTPS Client
+- [ ] HTTP2.0
 - [x] WebSocket
 
 ## Installation

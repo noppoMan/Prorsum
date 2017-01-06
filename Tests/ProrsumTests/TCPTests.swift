@@ -20,6 +20,7 @@ class TCPTests: XCTestCase {
     static var allTests : [(String, (TCPTests) -> () throws -> Void)] {
         return [
             ("testTCPConnectAndRead", testTCPConnectAndRead),
+            ("testTCPConnectAndReadWithSpecifiedBytesCount", testTCPConnectAndReadWithSpecifiedBytesCount),
         ]
     }
     

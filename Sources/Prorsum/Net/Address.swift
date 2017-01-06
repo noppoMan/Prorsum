@@ -134,7 +134,7 @@ public class Address {
         }
     }
     
-    public func resolve(sockType: SockType, protocolType: Int32) throws -> Address {
+    public func resolve(sockType: SockType, protocolType: ProtocolType) throws -> Address {
         if isResolved {
             throw AddressError.addressIsAlreadyResolved
         }
@@ -144,7 +144,7 @@ public class Address {
         hints.ai_flags = AI_PASSIVE
         hints.ai_family = addressFamily.rawValue
         hints.ai_socktype = sockType.rawValue
-        hints.ai_protocol = protocolType
+        hints.ai_protocol = protocolType.rawValue
         hints.ai_addrlen = 0
 
         let ret = getaddrinfo(host, String(port), &hints, &addrInfoRef)

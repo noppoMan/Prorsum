@@ -60,6 +60,8 @@ public final class WebSocket {
     
     public let mode: Mode
     
+    public var storage: [String: Any] = [:]
+    
     fileprivate let stream: DuplexStream
     fileprivate var state: State = .header
     fileprivate var closeState: CloseState = .open

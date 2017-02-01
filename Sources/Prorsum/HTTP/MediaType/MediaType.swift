@@ -278,6 +278,7 @@ let fileExtensionMediaTypeMapping: [String: String] = [
     "pcf": "application/x-font",
     "pcf.Z": "application/x-font",
     "woff": "application/x-font-woff",
+    "woff2": "application/x-font-woff2",
     "mm": "application/x-freemind",
     //	"spl": "application/x-futuresplash",
     "gan": "application/x-ganttproject",

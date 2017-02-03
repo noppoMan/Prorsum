@@ -348,6 +348,57 @@ try! server.listen()
 RunLoop.main.run()
 ```
 
+
+## Routing and register Middlewares with WebAppKit
+
+[WebAppKit](https://github.com/noppoMan/WebAppKit) provides Router and Middlewares for Prorosum.
+
+```swift
+import Prorsum
+import WebAppKit
+import Foundation
+
+let app = Ace()
+var router = Router()
+
+let root = #file.characters
+    .split(separator: "/", omittingEmptySubsequences: false)
+    .dropLast(1)
+    .map { String($0) }
+    .joined(separator: "/")
+
+app.use(ServeStaticMiddleware(root: root + "/../public"))
+
+router.use(.get, "/") { request in
+    return Response(body: .buffer("Welcome WebAppKit!".data))
+}
+
+app.use(router)
+
+app.catch { error in
+    switch error {
+    case ServeStaticMiddlewareError.resourceNotFound(let path):
+        return Response(status: .notFound, body: .buffer("\(path) is not found".data))
+
+    case RouterError.routeNotFound(let path):
+        return Response(status: .notFound, body: .buffer("\(path) is not found".data))
+
+    default:
+        print(error)
+        return Response(status: .internalServerError, body: .buffer("Internal Server Error".data))
+    }
+}
+
+let server = try! HTTPServer(app.handler)
+
+try! server.bind(host: "0.0.0.0", port: 3000)
+print("Server listening at 0.0.0.0:3000")
+try! server.listen()
+
+RunLoop.main.run()
+```
+
+
 ## Related Articles
 * [Rethink Appropriate Server Architecture For Swift](https://medium.com/@yukitakei/rethink-appropriate-server-architecture-for-swift-7c8513944db8#.9ii5n3yuz)
 

@@ -127,6 +127,7 @@ public class Channel<T> {
     
     public func close(){
         cond.mutex.lock()
+        cond.broadcast()
         isClosed = true
         cond.mutex.unlock()
     }

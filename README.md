@@ -101,7 +101,7 @@ A WaitGroup waits for a collection of GCD operations to finish. The main GCD ope
 
 
 ```swift
-let wg = WaitGrpup()
+let wg = WaitGroup()
 
 wg.add(1)
 go {

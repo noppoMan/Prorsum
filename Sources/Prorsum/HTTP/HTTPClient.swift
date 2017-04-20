@@ -75,7 +75,18 @@ public class HTTPClient {
             headers: headers,
             body: .buffer(body)
         )
-        
+        if let upgradeConnection = upgradeConnection {
+            request.upgradeConnection(upgradeConnection)
+        }
+        return try self.request(request)
+    }
+    
+    public func close() {
+        stream.close()
+    }
+    
+    public func request(_ request: Request) throws -> Response {
+        var request = request
         if request.userAgent == nil {
             request.userAgent = "Prorsum HTTP Client"
         }
@@ -85,15 +96,11 @@ public class HTTPClient {
         }
         
         if request.host == nil {
-           request.host = url.host
+            request.host = url.host
         }
         
         if request.accept.isEmpty {
             request.accept = [try MediaType(string: "Accept: */*")]
-        }
-        
-        if let upgradeConnection = upgradeConnection {
-            request.upgradeConnection(upgradeConnection)
         }
         
         let serializer = RequestSerializer(stream: stream)

@@ -81,6 +81,10 @@ public class HTTPClient {
         return try self.request(request)
     }
     
+    public func close() {
+        stream.close()
+    }
+    
     public func request(_ request: Request) throws -> Response {
         var request = request
         if request.userAgent == nil {

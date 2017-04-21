@@ -15,7 +15,9 @@ public enum WebSocketClientError: Error {
 public class WebSocketClient {
     
     let client: HTTPClient
+    
     let didConnect: (WebSocket) throws -> Void
+    
     let connectionTimeout: Double?
     
     public init(url:  URL, connectionTimeout: Double? = nil, didConnect: @escaping (WebSocket) throws -> Void) throws {
@@ -27,12 +29,15 @@ public class WebSocketClient {
     public func connect() throws {
         let key = Data(bytes: Array(URandom().bytes(16))).base64EncodedString(options: [])
         
+        let sid = NSUUID().uuidString
+        
         let headers: Headers = [
             "Connection": "Upgrade",
             "Upgrade": "websocket",
             "Sec-WebSocket-Version": "13",
             "Sec-WebSocket-Key": key,
-            ]
+            "X-WebSocket-Session-ID": sid
+        ]
         
         try client.open()
         
@@ -48,6 +53,7 @@ public class WebSocketClient {
             }
             
             let webSocket = WebSocket(stream: stream, mode: .client, connectionTimeout: strongSelf.connectionTimeout ?? 0)
+            webSocket.id = sid
             try strongSelf.didConnect(webSocket)
             try webSocket.start()
         }

@@ -149,7 +149,7 @@ public class Address {
 
         let ret = getaddrinfo(host, String(port), &hints, &addrInfoRef)
         guard ret == 0 else {
-            throw SystemError.lastOperationError!
+            throw AIError(errorNumber: ret) ?? SystemError.lastOperationError!
         }
         
         guard let addrList = addrInfoRef else {

@@ -20,6 +20,7 @@
 //OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 //SOFTWARE.
 
+
 public enum Certificates {
     public enum Signature {
         case selfSigned
@@ -66,32 +67,12 @@ public enum Certificates {
 extension Certificates {
     @available(*, deprecated: 1.0, message: "Use `.openbsd` instead.")
     public static var mozilla: Certificates {
-        let root = #file.characters
-            .split(separator: "/", omittingEmptySubsequences: false)
-            .dropLast(4)
-            .map { String($0) }
-            .joined(separator: "/")
-        
-        return .certificateAuthority(
-            signature: .signedFile(
-                caCertificateFile: root + "/Certs/mozilla_certs.pem"
-            )
-        )
+        return .certificateAuthority(signature: .signedBytes(caCertificateBytes: mozilla_certs_pem.bytes))
     }
 }
 
 extension Certificates {
     public static var openbsd: Certificates {
-        let root = #file.characters
-            .split(separator: "/", omittingEmptySubsequences: false)
-            .dropLast(4)
-            .map { String($0) }
-            .joined(separator: "/")
-        
-        return .certificateAuthority(
-            signature: .signedFile(
-                caCertificateFile: root + "/Certs/openbsd_certs.pem"
-            )
-        )
+        return .certificateAuthority(signature: .signedBytes(caCertificateBytes: openbsd_certs_pem.bytes))
     }
 }

@@ -100,7 +100,7 @@ public class HTTPClient {
         }
         
         if request.accept.isEmpty {
-            request.accept = [try MediaType(string: "Accept: */*")]
+            request.accept = [try MediaType(string: "*/*")]
         }
         
         let serializer = RequestSerializer(stream: stream)

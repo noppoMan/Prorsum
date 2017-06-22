@@ -28,7 +28,7 @@ class HTTPClientTests: XCTestCase {
     }
     
     func testConnect() {
-        let client = try! HTTPClient(url: URL(string: "http://httpbin.org")!)
+        let client = try! HTTPClient(url: URL(string: "http://httpbin.org/get")!)
         try! client.open()
         let response = try! client.request()
         
@@ -36,7 +36,7 @@ class HTTPClientTests: XCTestCase {
     }
     
     func testHTTPSConnect() {
-        let client = try! HTTPClient(url: URL(string: "https://httpbin.org")!)
+        let client = try! HTTPClient(url: URL(string: "https://httpbin.org/get")!)
         try! client.open()
         let response = try! client.request()
         

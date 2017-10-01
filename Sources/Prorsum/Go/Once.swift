@@ -13,7 +13,7 @@ public class Once {
     
     private var done = false
     
-    public func `do`(_ task: @escaping (Void) -> Void){
+    public func `do`(_ task: @escaping () -> Void){
         cond.mutex.lock()
         defer {
             cond.mutex.unlock()

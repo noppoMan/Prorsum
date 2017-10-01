@@ -19,18 +19,22 @@ let allTests = [
     channelTest
 ]
 
-if CommandLine.arguments.count >= 1 {
+let testTarget: String
+if CommandLine.arguments.count <= 1 {
+    testTarget = "all"
+} else {
+    testTarget = CommandLine.arguments[1]
+}
+
+switch testTarget {
+case "all":
     for i in 0..<allTests.count {
         allTests[i]()
     }
-    exit(0)
-}
+    
+case "http-server":
+    httpServerTest()
 
-let testTarget = CommandLine.arguments[1]
-
-switch testTarget {
-case "channel":
-allTests[0]()
 default:
     print("unknow pref.")
     exit(1)

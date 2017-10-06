@@ -9,6 +9,7 @@ let package = Package(
     ],
     targets: [
         .target(name: "Prorsum", dependencies: ["CHTTPParser", "CLibreSSL"]),
-        .target(name: "Performance", dependencies: ["Prorsum"])
+        .target(name: "Performance", dependencies: ["Prorsum"]),
+        .testTarget(name: "ProrsumTests", dependencies: ["Prorsum"])
     ]
 )

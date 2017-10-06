@@ -1,7 +1,7 @@
 # Prorsum
 A Go like concurrent system + networking/http libraries for Swift that works on Linux and Mac.
 
-<img src="https://camo.githubusercontent.com/93de6573350b91e48ab570a4fe710e4e8baa38b8/687474703a2f2f696d672e736869656c64732e696f2f62616467652f73776966742d332e302d627269676874677265656e2e737667"> [<img src="https://travis-ci.org/noppoMan/Prorsum.svg?branch=master">](https://travis-ci.org/noppoMan/Prorsum)
+[<img src="https://travis-ci.org/noppoMan/Prorsum.svg?branch=master">](https://travis-ci.org/noppoMan/Prorsum)
 ### Why Prorsum?
 The reason why I started this project is because I felt it was very difficult to handle asynchronous io with Swift in the project called [Slimane](https://github.com/noppoMan/Slimane) which I had previously made. In the Asynchronous paradigm in Swift, We need to often use the capture list well for closures and sometimes retain the object(Connection etc..) to avoid to release by ARC.
 Then I thought Go's concurrent/parallel and synchronous mecanism is suitable model for the present stage of Swift(If you want to write Server on the MultiCore Machine). Because we can easy to make async operations wituhout callback chains, can use Full Cores with the simple syntax and easy to share the memory via Channel between a Thread and a Thread.

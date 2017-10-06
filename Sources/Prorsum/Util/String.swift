@@ -53,7 +53,7 @@ extension String {
             }
         }
         
-        return self[index(startIndex, offsetBy: start) ..< endIndex]
+        return String(self[index(startIndex, offsetBy: start) ..< endIndex])
     }
     
     public func trimRight(_ characterSet: Characters) -> String {
@@ -66,7 +66,7 @@ extension String {
             }
         }
         
-        return self[startIndex ..< index(endIndex, offsetBy: -end)]
+        return String(self[startIndex ..< index(endIndex, offsetBy: -end)])
     }
     
     public func index(of string: String) -> String.CharacterView.Index? {

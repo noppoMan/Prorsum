@@ -19,7 +19,7 @@ private protocol AnyContext {
 
 private class Context<T>: AnyContext {
     var when: ((T) -> Void)?
-    var otherwise: ((Void) -> Void)?
+    var otherwise: (() -> Void)?
     var channel: Channel<T>?
     var message: T?
 
@@ -28,7 +28,7 @@ private class Context<T>: AnyContext {
         self.when = when
     }
 
-    init(otherwise: @escaping (Void) -> Void){
+    init(otherwise: @escaping () -> Void){
         self.otherwise = otherwise
     }
     
@@ -96,7 +96,7 @@ private class Select {
         contexts[chan.id] = context
     }
     
-    func otherwise(_ handler: @escaping (Void) -> Void){
+    func otherwise(_ handler: @escaping () -> Void){
         cond.mutex.lock()
         defer {
             cond.mutex.unlock()
@@ -108,7 +108,7 @@ private class Select {
     }
 }
 
-public func forSelect(_ handler: (@escaping (Void) -> Void) -> Void){
+public func forSelect(_ handler: (@escaping () -> Void) -> Void){
     var done = false
     let _done = {
         Select.mutex.lock()
@@ -126,7 +126,7 @@ public func forSelect(_ handler: (@escaping (Void) -> Void) -> Void){
     }
 }
 
-public func select(_ handler: (Void) -> Void){
+public func select(_ handler: () -> Void){
     let sel = Select()
     Select.mutex.lock()
     Select.stack.pop()
@@ -142,7 +142,7 @@ public func when<T>(_ chan: Channel<T>, _ handler: @escaping (T) -> Void){
     }
 }
 
-public func otherwise(_ handler: @escaping (Void) -> Void){
+public func otherwise(_ handler: @escaping () -> Void){
     if let sel = Select.stack.front?.value {
         sel.otherwise(handler)
     }

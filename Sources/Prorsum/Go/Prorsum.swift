@@ -16,15 +16,15 @@ public enum DispatchConcurrentType {
     case concurrent
 }
 
-public func go(type: DispatchConcurrentType = .concurrent, _ routine: @autoclosure @escaping (Void) -> Void){
+public func go(type: DispatchConcurrentType = .concurrent, _ routine: @autoclosure @escaping () -> Void){
     _go(type, routine)
 }
 
-public func go(type: DispatchConcurrentType = .concurrent, _ routine: @escaping (Void) -> Void){
+public func go(type: DispatchConcurrentType = .concurrent, _ routine: @escaping () -> Void){
     _go(type, routine)
 }
 
-private func _go(_ type: DispatchConcurrentType, _ routine: @escaping (Void) -> Void){
+private func _go(_ type: DispatchConcurrentType, _ routine: @escaping () -> Void){
     switch type {
     case .concurrent:
         concurrentSchedulerQ.async(execute: routine)
@@ -33,11 +33,11 @@ private func _go(_ type: DispatchConcurrentType, _ routine: @escaping (Void) -> 
     }
 }
 
-public func gomain(_ routine: @autoclosure @escaping (Void) -> Void) {
+public func gomain(_ routine: @autoclosure @escaping () -> Void) {
     DispatchQueue.main.async(execute: routine)
 }
 
-public func gomain(_ routine: @escaping (Void) -> Void) {
+public func gomain(_ routine: @escaping () -> Void) {
     DispatchQueue.main.async(execute: routine)
 }
 

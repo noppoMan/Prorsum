@@ -1,25 +1,3 @@
-//The MIT License (MIT)
-//
-//Copyright (c) 2015 Zewo
-//
-//Permission is hereby granted, free of charge, to any person obtaining a copy
-//of this software and associated documentation files (the "Software"), to deal
-//in the Software without restriction, including without limitation the rights
-//to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-//copies of the Software, and to permit persons to whom the Software is
-//furnished to do so, subject to the following conditions:
-//
-//The above copyright notice and this permission notice shall be included in all
-//copies or substantial portions of the Software.
-//
-//THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-//IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-//FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-//AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-//LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-//OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-//SOFTWARE.
-
 import CHTTPParser
 import Foundation
 
@@ -71,8 +49,8 @@ public final class MessageParser {
     public let mode: Mode
     
     private var state: State = .ready
-    private var context = Context()
-    private var buffer: [UInt8] = []
+    fileprivate var context = Context()
+    fileprivate var buffer: [UInt8] = []
     
     private var messages: [Message] = []
     
@@ -202,16 +180,8 @@ public final class MessageParser {
                 
                 context.url = URL(string: string)!
             case .status:
-                buffer.append(0)
+                break
                 
-                let string = buffer.withUnsafeBufferPointer { (ptr: UnsafeBufferPointer<UInt8>) -> String in
-                    return String(cString: ptr.baseAddress!)
-                }
-                
-                context.status = Response.Status(
-                    statusCode: Int(parser.status_code),
-                    reasonPhrase: string
-                )
             case .headerField:
                 buffer.append(0)
                 
@@ -230,8 +200,7 @@ public final class MessageParser {
                 context.addValueForCurrentHeaderField(string)
             case .headersComplete:
                 context.currentHeaderField = nil
-                context.method = Request.Method(code: http_method(rawValue: parser.method))
-                context.version = Version(major: Int(parser.http_major), minor: Int(parser.http_minor))
+                
             case .body:
                 context.body = Data(buffer)
             }
@@ -338,43 +307,59 @@ extension Request.Method {
     }
 }
 
-private func http_parser_on_message_begin(ctx: UnsafeMutablePointer<http_parser>?) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_message_begin(parser: UnsafeMutablePointer<http_parser>?) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnMessageBegin()
 }
 
-private func http_parser_on_url(ctx: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_url(parser: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnURL(data: data!, length: length)
 }
 
-private func http_parser_on_status(ctx: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_status(parser: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
+    
+    ref.buffer.append(0)
+    
+    let string = ref.buffer.withUnsafeBufferPointer { (ptr: UnsafeBufferPointer<UInt8>) -> String in
+        return String(cString: ptr.baseAddress!)
+    }
+    
+    ref.context.status = Response.Status(
+        statusCode: Int(parser!.pointee.status_code),
+        reasonPhrase: string
+    )
+    
     return ref.processOnStatus(data: data!, length: length)
 }
 
-private func http_parser_on_header_field(ctx: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_header_field(parser: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnHeaderField(data: data!, length: length)
 }
 
-private func http_parser_on_header_value(ctx: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_header_value(parser: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnHeaderValue(data: data!, length: length)
 }
 
-private func http_parser_on_headers_complete(ctx: UnsafeMutablePointer<http_parser>?) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_headers_complete(parser: UnsafeMutablePointer<http_parser>?) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
+    ref.context.method = Request.Method(code: http_method(rawValue: parser!.pointee.method))
+    ref.context.version = Version(
+        major: Int(parser!.pointee.http_major),
+        minor: Int(parser!.pointee.http_minor)
+    )
     return ref.processOnHeadersComplete()
 }
 
-private func http_parser_on_body(ctx: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_body(parser: UnsafeMutablePointer<http_parser>?, data: UnsafePointer<Int8>?, length: Int) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnBody(data: data!, length: length)
 }
 
-private func http_parser_on_message_complete(ctx: UnsafeMutablePointer<http_parser>?) -> Int32 {
-    let ref = Unmanaged<MessageParser>.fromOpaque(ctx!.pointee.data).takeUnretainedValue()
+private func http_parser_on_message_complete(parser: UnsafeMutablePointer<http_parser>?) -> Int32 {
+    let ref = Unmanaged<MessageParser>.fromOpaque(parser!.pointee.data).takeUnretainedValue()
     return ref.processOnMessageComplete()
 }
-

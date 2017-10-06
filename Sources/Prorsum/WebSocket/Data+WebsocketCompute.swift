@@ -39,7 +39,7 @@ extension Data {
         self.append(bytes, count: bytes.count)
     }
     
-    init<T: Integer>(number: T) {
+    init<T: BinaryInteger>(number: T) {
         let totalBytes = MemoryLayout<T>.size
         
         let valuePointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
@@ -58,13 +58,14 @@ extension Data {
         }
     }
     
-    func toInt(_ size: Int, offset: Int = 0) -> UIntMax {
+    func toInt(_ size: Int, offset: Int = 0) -> UInt64 {
         guard size > 0 && size <= 8 && count >= offset+size else { return 0 }
         let slice = self[offset..<offset+size]
-        var result: UIntMax = 0
+        var result: UInt64 = 0
         for (idx, byte) in slice.enumerated() {
-            let shiftAmount = UIntMax(size.toIntMax() - idx - 1) * 8
-            result += UIntMax(byte) << shiftAmount
+            let (r, _) = size.subtractingReportingOverflow(idx)
+            let shiftAmount = UInt64(r - 1) * 8
+            result += UInt64(byte) << shiftAmount
         }
         return result
     }

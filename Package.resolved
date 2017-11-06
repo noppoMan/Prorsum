@@ -18,6 +18,15 @@
           "revision": "23ddb296981d17a8ee6c7418742a40cad5d2f9d0",
           "version": "1.0.0"
         }
+      },
+      {
+        "package": "ProrsumNet",
+        "repositoryURL": "https://github.com/noppoman/ProrsumNet.git",
+        "state": {
+          "branch": null,
+          "revision": "1ceb3dbfb07889e54e6276fb8b469241001e33e9",
+          "version": "0.1.0"
+        }
       }
     ]
   },

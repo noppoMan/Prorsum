@@ -9,7 +9,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/Zewo/CHTTPParser.git", .exact("0.14.0")),
-        .package(url: "https://github.com/noppoman/ProrsumNet.git", .upToNextMajor(from: "0.1.0"))
+        .package(url: "https://github.com/noppoman/ProrsumNet.git", .upToNextMajor(from: "0.1.2"))
     ],
     targets: [
         .target(name: "Prorsum", dependencies: ["CHTTPParser", "ProrsumNet"]),

@@ -6,6 +6,7 @@
 #endif
 import Foundation
 import Dispatch
+@_exported import ProrsumNet
 
 private let serialSchedulerQ = DispatchQueue(label: "prorsum.scheduler.serial-queue")
 

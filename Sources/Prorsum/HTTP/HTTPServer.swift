@@ -10,8 +10,10 @@ public final class HTTPServer {
     
     var server: TCPServer? = nil
     
+    var onError: ((Error) -> Void)? = nil
+    
     public init(_ handler: @escaping (Request, ResponrWriter) -> Void) throws {
-        server = try TCPServer { [unowned self] clientStream in
+        server = try TCPServer { [weak self] clientStream in
             do {
                 let parser = MessageParser(mode: .request)
                 
@@ -22,7 +24,7 @@ public final class HTTPServer {
                     }
                 }
             } catch {
-                self.server?.onError?(error)
+                self?.onError?(error)
                 clientStream.close()
             }
         }
@@ -30,6 +32,7 @@ public final class HTTPServer {
     
     public func onError(_ handler: @escaping (Error) -> Void) {
         server?.onError(handler)
+        onError = handler
     }
     
     public func bind(host: String, port: UInt) throws {

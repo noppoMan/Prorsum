@@ -6,7 +6,5 @@ XCTMain([
     testCase(HTTPClientTests.allTests),
     testCase(HTTPServerTests.allTests),
     testCase(SelectTests.allTests),
-    testCase(TCPTests.allTests),
-    testCase(WaitGroupTests.allTests),
-    testCase(UDPTests.allTests)
+    testCase(WaitGroupTests.allTests)
 ])

@@ -1,13 +1,19 @@
+// swift-tools-version:4.0
 import PackageDescription
 
 let package = Package(
     name: "Prorsum",
-    targets: [
-        Target(name: "Prorsum"),
-        Target(name: "Performance", dependencies: ["Prorsum"])
+    products: [
+        .executable(name: "prorsum-performance", targets: ["Performance"]),
+        .library(name: "Prorsum", targets: ["Prorsum"])
     ],
     dependencies: [
-        .Package(url: "https://github.com/Zewo/CHTTPParser.git", majorVersion: 0, minor: 14),
-        .Package(url: "https://github.com/vapor/clibressl.git", majorVersion: 1)
+        .package(url: "https://github.com/Zewo/CHTTPParser.git", .exact("0.14.0")),
+        .package(url: "https://github.com/noppoman/ProrsumNet.git", .upToNextMajor(from: "0.1.2"))
+    ],
+    targets: [
+        .target(name: "Prorsum", dependencies: ["CHTTPParser", "ProrsumNet"]),
+        .target(name: "Performance", dependencies: ["Prorsum"]),
+        .testTarget(name: "ProrsumTests", dependencies: ["Prorsum"])
     ]
 )

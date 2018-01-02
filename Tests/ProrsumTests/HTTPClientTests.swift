@@ -59,6 +59,14 @@ class HTTPClientTests: XCTestCase {
         XCTAssertEqual(response.statusCode, 200)
     }
     
+    func testRedirectToOtherDomainWithPort() {
+        let client = try! HTTPClient(url: URL(string: "https://httpbin.org/redirect-to?url=http%3A%2F%2Fexample.com%3A80")!)
+        try! client.open()
+        let response = try! client.request()
+
+        XCTAssertEqual(response.statusCode, 200)
+    }
+    
     func testRedirectMaxRedirectionExceeded() {
         HTTPClient.maxRedirection = 1
         defer {

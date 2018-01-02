@@ -96,7 +96,11 @@ public class HTTPClient {
         }
         
         if request.host == nil {
-            request.host = url.host
+            if let host = request.host, let port = url.port {
+                request.host = "\(host):\(port)"
+            } else {
+                request.host = url.host
+            }
         }
         
         if request.accept.isEmpty {

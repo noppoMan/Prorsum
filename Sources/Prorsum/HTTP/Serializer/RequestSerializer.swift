@@ -19,7 +19,23 @@ public struct RequestSerializer {
         let newLine: [UInt8] = [13, 10]
         
         let method = "\(request.method)".uppercased()
-        try stream.write("\(method) \(request.url.absoluteString) HTTP/\(request.version.major).\(request.version.minor)".bytes, deadline: deadline)
+
+        // if host is set
+        // build uri from path & query
+        // else use absoluteString
+        //
+        let requestURI: String
+        if request.host != nil {
+            var uri = !request.url.path.isEmpty ? request.url.path : "/" 
+            if let query = request.url.query {
+                uri += "?\(query)"
+            }
+            requestURI = uri
+        } else {
+            requestURI = request.url.absoluteString
+        }
+
+        try stream.write("\(method) \(requestURI) HTTP/\(request.version.major).\(request.version.minor)".bytes, deadline: deadline)
         try stream.write(newLine, deadline: deadline)
         
         for (name, value) in request.headers.headers {

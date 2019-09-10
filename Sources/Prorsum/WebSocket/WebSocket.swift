@@ -356,13 +356,13 @@ public final class WebSocket {
         let frame = Frame(opCode: opCode, data: data, maskKey: maskKey)
         let data = frame.data
         
-        try stream.write(data.bytes, deadline: 5)
+        try stream.write(data.withUnsafeBytes { [UInt8]($0) }, deadline: 5)
     }
     
     public static func accept(_ key: String) -> String? {
         let hashed = sha1(Array((key + GUID).utf8))
         
-        let encoded = Data(bytes: hashed).base64EncodedString(options: [])
+        let encoded = Data(hashed).base64EncodedString(options: [])
         return encoded
         
     }

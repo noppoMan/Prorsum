@@ -182,7 +182,7 @@ extension Request {
                     let acceptedTypeTokens = acceptedTypeString.split(separator: ";")
                     
                     if acceptedTypeTokens.count >= 1 {
-                        let mediaTypeString = acceptedTypeTokens[0].trim()
+                        let mediaTypeString = acceptedTypeTokens[0].trimmingCharacters(in: .whitespacesAndNewlines)
                         if let acceptedMediaType = try? MediaType(string: mediaTypeString) {
                             acceptedMediaTypes.append(acceptedMediaType)
                         }

@@ -64,7 +64,7 @@ extension Set where Element : CookieProtocol {
                 return nil
             }
             
-            cookies.insert(Element(name: cookieTokens[0].trim(), value: cookieTokens[1].trim()))
+            cookies.insert(Element(name: cookieTokens[0].trimmingCharacters(in: .whitespacesAndNewlines), value: cookieTokens[1].trimmingCharacters(in: .whitespacesAndNewlines)))
         }
         
         self = cookies

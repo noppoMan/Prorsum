@@ -54,17 +54,17 @@ public struct ResponseSerializer {
                     break
                 }
                 
-                try stream.write(String(bytes.count, radix: 16).bytes, deadline: deadline)
-                try stream.write("\r\n".bytes, deadline: deadline)
+                try stream.write(Array(String(bytes.count, radix: 16).utf8), deadline: deadline)
+                try stream.write(Array("\r\n".utf8), deadline: deadline)
                 try stream.write(bytes, deadline: deadline)
-                try stream.write("\r\n".bytes, deadline: deadline)
+                try stream.write(Array("\r\n".utf8), deadline: deadline)
             }
             
-            try stream.write("0\r\n\r\n".bytes, deadline: deadline)
+            try stream.write(Array("0\r\n\r\n".utf8), deadline: deadline)
         case .writer(let writer):
             let body = BodyStream(stream)
             try writer(body)
-            try stream.write("0\r\n\r\n".bytes, deadline: deadline)
+            try stream.write(Array("0\r\n\r\n".utf8), deadline: deadline)
         }
     }
 }

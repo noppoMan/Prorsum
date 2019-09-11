@@ -3,8 +3,8 @@ os:
   - osx
 language: generic
 sudo: required
-dist: trusty
-osx_image: xcode9
+dist: xenial
+osx_image: xcode10.3
 
 install:
   - source Scripts/install-swift.sh

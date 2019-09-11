@@ -2,4 +2,4 @@
 /.build
 /Packages
 /*.xcodeproj
-Sources/Prorsum/main.swift
+Package.resolved

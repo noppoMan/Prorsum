@@ -45,8 +45,8 @@ extension Data {
         let valuePointer = UnsafeMutablePointer<T>.allocate(capacity: 1)
         valuePointer.pointee = number
         defer {
-            valuePointer.deinitialize()
-            valuePointer.deallocate(capacity: 1)
+            valuePointer.deinitialize(count: 1)
+            valuePointer.deallocate()
         }
         
         var bytes = [UInt8](repeating: 0, count: totalBytes)

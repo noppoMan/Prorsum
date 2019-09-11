@@ -89,14 +89,6 @@ public final class MessageParser {
         }
     }
     
-    public func parse(_ from: DataRepresentable) throws -> [Message] {
-        let buffer = from.data
-        
-        return try buffer.withUnsafeBytes {
-            try self.parse(UnsafeBufferPointer(start: $0, count: buffer.count))
-        }
-    }
-    
     public func parse(_ bytes: UnsafeBufferPointer<Byte>) throws -> [Message] {
         let final = bytes.isEmpty
         let needsMessage: Bool

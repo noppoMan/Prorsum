@@ -25,7 +25,7 @@ public class WebSocketClient {
     }
     
     public func connect() throws {
-        let key = Data(bytes: Array(URandom().bytes(16))).base64EncodedString(options: [])
+        let key = Data(Array(URandom().bytes(16))).base64EncodedString(options: [])
         
         let headers: Headers = [
             "Connection": "Upgrade",

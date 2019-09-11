@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-VERSION="4.0"
+VERSION="5.0.3"
 
 # Determine OS
 UNAME=`uname`;
@@ -11,9 +11,9 @@ else
     if [[ $UNAME == "Linux" ]];
     then
         UBUNTU_RELEASE=`lsb_release -a 2>/dev/null`;
-        if [[ $UBUNTU_RELEASE == *"15.10"* ]];
+        if [[ $UBUNTU_RELEASE == *"16.04"* ]];
         then
-            OS="ubuntu1510";
+            OS="ubuntu1604";
         else
             OS="ubuntu1404";
         fi
@@ -24,9 +24,9 @@ if [[ $OS != "macos" ]];
 then
     sudo apt-get install -y clang libicu-dev uuid-dev
 
-    if [[ $OS == "ubuntu1510" ]];
+    if [[ $OS == "ubuntu1604" ]];
     then
-        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu15.10";
+        SWIFTFILE="swift-$VERSION-RELEASE-ubuntu16.04";
     else
         SWIFTFILE="swift-$VERSION-RELEASE-ubuntu14.04";
     fi

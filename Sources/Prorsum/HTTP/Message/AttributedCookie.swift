@@ -52,8 +52,8 @@ public struct AttributedCookie {
             return nil
         }
         
-        let name = cookieTokens[0]
-        let value = cookieTokens[1]
+        let name = String(cookieTokens[0])
+        let value = String(cookieTokens[1])
         
         var attributes: [CaseInsensitiveString: String] = [:]
         
@@ -62,9 +62,9 @@ public struct AttributedCookie {
             
             switch attributeTokens.count {
             case 1:
-                attributes[CaseInsensitiveString(attributeTokens[0].trim())] = ""
+                attributes[CaseInsensitiveString(attributeTokens[0].trimmingCharacters(in: .whitespacesAndNewlines))] = ""
             case 2:
-                attributes[CaseInsensitiveString(attributeTokens[0].trim())] = attributeTokens[1].trim()
+                attributes[CaseInsensitiveString(attributeTokens[0].trimmingCharacters(in: .whitespacesAndNewlines))] = attributeTokens[1].trimmingCharacters(in: .whitespacesAndNewlines)
             default:
                 return nil
             }
@@ -98,8 +98,13 @@ public struct AttributedCookie {
 }
 
 extension AttributedCookie : Hashable {
+    
     public var hashValue: Int {
         return name.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.name.hashValue)
     }
 }
 

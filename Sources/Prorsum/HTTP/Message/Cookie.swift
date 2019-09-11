@@ -31,8 +31,13 @@ public struct Cookie : CookieProtocol {
 }
 
 extension Cookie : Hashable {
+    
     public var hashValue: Int {
         return name.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.name.hashValue)
     }
 }
 
@@ -64,7 +69,7 @@ extension Set where Element : CookieProtocol {
                 return nil
             }
             
-            cookies.insert(Element(name: cookieTokens[0].trim(), value: cookieTokens[1].trim()))
+            cookies.insert(Element(name: cookieTokens[0].trimmingCharacters(in: .whitespacesAndNewlines), value: cookieTokens[1].trimmingCharacters(in: .whitespacesAndNewlines)))
         }
         
         self = cookies

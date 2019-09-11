@@ -52,14 +52,14 @@ public struct MediaType : CustomStringConvertible {
         var parameters: [String: String] = [:]
         
         if mediaTypeTokens.count == 2 {
-            let parametersTokens = mediaTypeTokens[1].trim().split(separator: " ")
+            let parametersTokens = mediaTypeTokens[1].trimmingCharacters(in: .whitespacesAndNewlines).split(separator: " ")
             
             for parametersToken in parametersTokens {
                 let parameterTokens = parametersToken.split(separator: "=")
                 
                 if parameterTokens.count == 2 {
-                    let key = parameterTokens[0]
-                    let value = parameterTokens[1]
+                    let key = String(parameterTokens[0])
+                    let value = String(parameterTokens[1])
                     parameters[key] = value
                 }
             }
@@ -103,8 +103,13 @@ extension Collection where Self.Iterator.Element == MediaType {
 }
 
 extension MediaType : Hashable {
+    
     public var hashValue: Int {
         return type.hashValue ^ subtype.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.type.hashValue ^ self.subtype.hashValue)
     }
 }
 

@@ -170,8 +170,12 @@ struct Frame {
         let data = data.data
         let maskKey = maskKey.data
         
-        let op = (1 << 7) | (0 << 6) | (0 << 5) | (0 << 4) | opCode.rawValue
-        self.data.append(op)
+        let op7 = 1 << 7
+        let op6 = 0 << 6
+        let op5 = 0 << 5
+        let op4 = 0 << 4
+        var op = op7 | op6 | op5 | op4 | Int(opCode.rawValue)
+        self.data.append([UInt8](Data(bytes: &op, count: MemoryLayout<Int>.size)))
         
         let masked: Bool = maskKey.count == 4
         let mask: UInt8 = masked ? 1 : 0

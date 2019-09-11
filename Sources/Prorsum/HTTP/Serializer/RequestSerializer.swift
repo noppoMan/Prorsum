@@ -47,7 +47,8 @@ public struct RequestSerializer {
         
         switch request.body {
         case .buffer(let buffer):
-            try stream.write(buffer.bytes, deadline: deadline)
+//            try stream.write(buffer.withUnsafeBytes { [UInt8](UnsafeBufferPointer(start: $0, count: buffer.count)) }, deadline: deadline)
+            try stream.write([UInt8](buffer), deadline: deadline)
         case .reader(let reader):
             while !reader.isClosed {
                 let buffer = try reader.read(upTo: bufferSize, deadline: deadline)

@@ -41,11 +41,11 @@ public struct ResponseSerializer {
         
         header += "\r\n"
         
-        try stream.write(header.bytes, deadline: deadline)
+        try stream.write(Array(header.utf8), deadline: deadline)
         
         switch response.body {
         case .buffer(let buffer):
-            try stream.write(buffer.bytes, deadline: deadline)
+            try stream.write(buffer.withUnsafeBytes { [UInt8]($0) }, deadline: deadline)
         case .reader(let reader):
             while !reader.isClosed {
                 let bytes = try reader.read(upTo: bufferSize, deadline: deadline)

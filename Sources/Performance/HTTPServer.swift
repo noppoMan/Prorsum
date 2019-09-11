@@ -15,7 +15,7 @@ func httpServerTest(){
         do {
             let response = Response(
                 headers: ["Server": "Prorsum Micro HTTP Server"],
-                body: .buffer("hello".data(using: .utf8)!)
+                body: .buffer("hello".data)
             )
             
             try writer.serialize(response)

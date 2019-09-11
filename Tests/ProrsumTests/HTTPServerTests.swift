@@ -25,7 +25,7 @@ class HTTPServerTests: XCTestCase {
     
     func testHTTPConnect() {
         let server = try! HTTPServer { request, writer in
-            let response = Response(body: "Hello!".data(using: .utf8)!)
+            let response = Response(body: "Hello!".data)
             
             try! writer.serialize(response)
             writer.close()

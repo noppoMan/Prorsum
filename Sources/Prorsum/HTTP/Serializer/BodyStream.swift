@@ -41,9 +41,9 @@ final class BodyStream : DuplexStream {
             throw StreamError.alreadyClosed
         }
         
-        try transport.write(Array(String(bytes.count, radix: 16).utf8), deadline: deadline)
-        try transport.write(Array("\r\n".utf8), deadline: deadline)
+        try transport.write(String(bytes.count, radix: 16).bytes, deadline: deadline)
+        try transport.write("\r\n".bytes, deadline: deadline)
         try transport.write(bytes, deadline: deadline)
-        try transport.write(Array("\r\n".utf8), deadline: deadline)
+        try transport.write("\r\n".bytes, deadline: deadline)
     }
 }

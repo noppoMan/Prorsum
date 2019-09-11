@@ -16,7 +16,7 @@ public enum Body {
 
 extension Body {
     public static var empty: Body {
-        return .buffer(Data())
+        return .buffer(.empty)
     }
     
     public var isEmpty: Bool {

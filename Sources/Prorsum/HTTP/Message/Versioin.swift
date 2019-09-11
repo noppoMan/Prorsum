@@ -21,7 +21,9 @@
 //SOFTWARE.
 
 public struct Version {
+    
     public var major: Int
+    
     public var minor: Int
     
     public init(major: Int, minor: Int) {
@@ -31,8 +33,13 @@ public struct Version {
 }
 
 extension Version : Hashable {
+    
     public var hashValue: Int {
         return major ^ minor
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.major ^ self.minor)
     }
 }
 

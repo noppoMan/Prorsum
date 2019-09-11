@@ -103,8 +103,13 @@ extension Collection where Self.Iterator.Element == MediaType {
 }
 
 extension MediaType : Hashable {
+    
     public var hashValue: Int {
         return type.hashValue ^ subtype.hashValue
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(self.type.hashValue ^ self.subtype.hashValue)
     }
 }
 
